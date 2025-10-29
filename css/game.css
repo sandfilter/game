@@ -1,0 +1,219 @@
+/* --- 战斗动画区域 --- */
+.animation-area {
+    flex: 1;
+    background: #0a1a25;
+    border: 2px solid #5d8aa8;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 357px; /* <-- 计算/修改: 缩短最小高度约 20% */
+}
+
+.animation-area canvas {
+    max-width: 100%;
+    height: auto;
+    background-color: #16213e;
+    border-radius: 6px;
+    border: 2px solid #fca311;
+    object-fit: contain;
+}
+
+.instructions {
+    position: absolute;
+    bottom: 8px; /* <-- 修改: 稍微上移一点 */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px; /* <-- 修改: 略微缩小字体 */
+    color: #bbb;
+    text-align: center;
+    z-index: 10;
+    background: rgba(0,0,0,0.4);
+    padding: 4px 8px; /* <-- 修改: 减少内边距 */
+    border-radius: 5px;
+}
+
+/* 战斗模拟样式 (结果屏幕) */
+#resultScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; border-radius: 6px; }
+.result-text { font-size: 32px; color: gold; margin-bottom: 15px; text-align: center; } /* <-- 修改: 缩小字体和间距 */
+.stats-text { font-size: 20px; margin: 8px 0; text-align: center; } /* <-- 修改: 缩小字体和间距 */
+.countdown-text { font-size: 18px; margin-top: 30px; color: #fca311; text-align: center; } /* <-- 修改: 缩小字体和间距 */
+.scene-indicator { position: absolute; top: 8px; left: 8px; background-color: rgba(0, 0, 0, 0.5); padding: 6px 10px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 13px; } /* <-- 修改: 调整位置/内边距/字体 */
+
+
+/* --- 消息区域样式 --- */
+.message-header { display: flex; align-items: center; margin-bottom: 8px; font-weight: bold; color: #ffcc00; } /* <-- 修改: 减少下边距 */
+.message-container {
+    background: #0c151f;
+    border: 2px solid #5d8aa8;
+    border-radius: 6px;
+    height: 200px; /* <-- 修改: 缩短高度 */
+    overflow-y: auto;
+    padding: 8px; /* <-- 修改: 减少内边距 */
+}
+.message { margin-bottom: 2px; padding: 2px 5px; border-bottom: none; font-size: 13px; }
+.system { color: #FF9900; }
+.combat { color: #66B3FF; }
+.reward { color: #00FF7F; }
+.error { color: #CC0000; }
+.legendary { color: #ff8000; font-weight: bold;}
+
+/* --- 副本进度区域样式 (侧边栏) --- */
+.dungeon-progress-area {
+    width: 300px;
+    height: 250px; /* <-- 修改: 缩短高度 */
+    background: #0c151f;
+    border: 2px solid #5d8aa8; border-radius: 6px;
+    display: flex; flex-direction: column;
+}
+.progress-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* <-- 修改: 减少内边距 */
+.boss-list { flex: 1; padding: 8px; overflow-y: auto; list-style: none; } /* <-- 修改: 减少内边距 */
+.boss-item { padding: 4px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* <-- 修改: 减少内边距和字体大小 */
+.boss-item.current { color: #ffcc00; font-weight: bold; }
+.boss-item.completed { color: #88dd88; text-decoration: line-through; }
+.boss-item:last-child { border-bottom: none; }
+.progress-button-container { padding: 8px; text-align: center; } /* <-- 修改: 减少内边距 */
+
+/* --- 任务区域样式 (侧边栏) --- */
+.quest-area { flex: 1; background: #0c151f; border: 2px solid #5d8aa8; border-radius: 6px; display: flex; flex-direction: column; }
+.quest-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* <-- 修改: 减少内边距 */
+.quest-list { flex: 1; padding: 8px; overflow-y: auto; } /* <-- 修改: 减少内边距 */
+.quest-item { padding: 6px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* <-- 修改: 减少内边距和字体大小 */
+.quest-item:last-child { border-bottom: none; }
+.quest-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; } /* <-- 修改: 减少上边距 */
+.quest-claim-btn { padding: 3px 6px; background: #3a6187; border: 1px solid #5d8aa8; color: #e0e0e0; border-radius: 3px; cursor: pointer; font-size: 12px; } /* <-- 修改: 减少内边距和字体大小 */
+.quest-claim-btn:disabled { background: #2a3b4a; color: #777; cursor: not-allowed; }
+
+/* --- 地下城进度弹窗 (内容) --- */
+.dungeon-list-container { display: flex; gap: 15px; } /* <-- 修改: 减少间隙 */
+.dungeon-list { flex: 1; }
+.dungeon-list h3 { color: #aaddff; margin-bottom: 8px; border-bottom: 1px solid #4a79ab; padding-bottom: 4px; font-size: 15px;} /* <-- 修改: 调整间距/字体 */
+.dungeon-list ul { list-style: none; padding: 0; margin: 0; }
+.dungeon-list li { padding: 3px; border-radius: 4px; margin-bottom: 2px; background: #0c151f; transition: background-color 0.2s; font-size: 13px; } /* <-- 修改: 减少内边距/字体 */
+.dungeon-list li:hover { background-color: #1a3b5c; cursor: pointer; }
+.dungeon-list li.completed { color: #88dd88; }
+.dungeon-list li.current { background-color: #fca311; color: #000; font-weight: bold; }
+
+/* --- 兑换中心弹窗 (内容) --- */
+.exchange-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px; /* <-- 修改: 减少内边距 */
+    margin-bottom: 6px; /* <-- 修改: 减少间距 */
+    background: #0c151f;
+    border: 1px solid #2c4459;
+    border-radius: 4px;
+}
+.exchange-info {
+    font-size: 13px; /* <-- 修改: 缩小字体 */
+    line-height: 1.4;
+}
+.exchange-info .badge-name {
+    font-weight: bold;
+    color: #aaddff;
+}
+
+.exchange-currency-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px; /* <-- 修改: 减少间隙 */
+    padding: 8px; /* <-- 修改: 减少内边距 */
+    background: #0c151f;
+    border: 1px solid #2c4459;
+    border-radius: 4px;
+    margin-bottom: 12px; /* <-- 修改: 减少间距 */
+}
+.currency-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px; /* <-- 修改: 缩小字体 */
+    color: #e0e0e0;
+}
+.currency-item span:first-child {
+    color: #aaddff;
+}
+.currency-item span:last-child {
+    font-weight: bold;
+}
+.exchange-divider {
+    border: none;
+    border-top: 1px solid #5d8aa8;
+    margin: 12px 0; /* <-- 修改: 减少间距 */
+}
+.modal-body h3 {
+     font-size: 16px; /* <-- 修改: 缩小标题字体 */
+     margin-bottom: 8px; /* <-- 修改: 减少下边距 */
+     color: #aaddff;
+}
+
+/* --- 页脚信息样式 --- */
+.footer-info {
+    text-align: right;
+    padding: 6px 12px; /* <-- 修改: 减少内边距 */
+    font-size: 11px; /* <-- 修改: 缩小字体 */
+    color: #7a9bb7;
+    background-color: #112233;
+    border-top: 1px solid #2c4459;
+}
+
+/* --- 角色面板样式 --- */
+.character-pane {
+    width: 700px; /* 调整宽度 */
+}
+
+.character-layout {
+    display: flex;
+    gap: 20px;
+}
+
+.character-stats {
+    width: 200px; /* 属性区域宽度 */
+    padding-right: 20px;
+    border-right: 1px solid #2c4459;
+}
+
+.character-stats h3 {
+    margin-bottom: 10px;
+    color: #aaddff;
+}
+
+.equipment-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 调整为3列，左右装备，中间空白 */
+    gap: 10px;
+}
+
+.equip-slot {
+    border: 1px solid #4a79ab;
+    background-color: rgba(12, 21, 31, 0.7);
+    border-radius: 4px;
+    min-height: 60px; /* 确保格子有高度 */
+    display: flex;
+    flex-direction: column; /* 图标在上，文字在下 */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 12px;
+    color: #ccc;
+    padding: 5px;
+}
+
+.equip-slot span {
+    font-size: 24px; /* 表情符号大小 */
+    margin-bottom: 4px;
+}
+
+/* 中间空白列的样式 */
+.equip-slot.empty-left {
+    border: none;
+    background: none;
+}
+
+/* 武器槽位可以单独设置样式 */
+.equip-slot.weapon-slot {
+   /* 可以加特殊边框或其他 */
+}

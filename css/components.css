@@ -1,0 +1,86 @@
+/* --- 状态栏 --- */
+.status-bar {
+    display: flex;
+    align-items: center; /* Vertically align items */
+    padding: 10px 15px; /* <-- 修改: 减少状态栏内边距 */
+    background: linear-gradient(to right, #1c2f40, #2a4865);
+    border-bottom: 2px solid #5d8aa8;
+    flex-wrap: wrap;
+}
+
+.status-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* <-- 修改: 减少状态项间隙 */
+}
+
+.status-item { display: flex; align-items: center; margin: 3px; font-size: 14px; } /* <-- 修改: 减少状态项外边距 */
+.status-icon { margin-right: 5px; font-size: 16px; }
+
+/* --- 底部按钮区域 --- */
+.button-section { padding: 12px; background: linear-gradient(to right, #1c2f40, #2a4865); border-top: 2px solid #5d8aa8; } /* <-- 修改: 减少内边距 */
+.button-header { text-align: center; margin-bottom: 8px; font-weight: bold; } /* <-- 修改: 减少下边距 */
+.button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 8px; } /* <-- 修改: 减少间隙和下边距 */
+
+/* --- 通用按钮样式 --- */
+.wow-button { padding: 8px 16px; background: linear-gradient(to bottom, #3a6187, #1c2f40); border: 1px solid #5d8aa8; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-weight: bold; transition: all 0.2s; min-width: 110px; text-align: center; font-size: 14px; } /* <-- 修改: 减少内边距和最小宽度 */
+.wow-button:hover { background: linear-gradient(to bottom, #4a79ab, #2a4865); box-shadow: 0 0 8px rgba(93, 138, 168, 0.6); }
+.wow-button:active { transform: translateY(1px); } /* <-- 修改: 减少按下距离 */
+.wow-button.disabled { background: #2a3b4a; color: #777; cursor: not-allowed; border-color: #444; }
+.wow-button.disabled:hover { transform: none; box-shadow: none; background: #2a3b4a; }
+
+/* --- 存档按钮组 (状态栏) --- */
+.save-button-group { margin-left: auto; display: flex; gap: 8px;} /* <-- 修改: 减少间隙 */
+
+/* (修改：现在 #settingsBtn 使用这个样式) */
+#settingsBtn {
+     padding: 6px 12px; /* <-- 修改: 减少内边距 */
+     min-width: auto;
+     font-size: 13px; /* <-- 修改: 缩小字体 */
+}
+
+/* (样式规则现在应用于弹窗内的按钮) */
+#importSaveBtn, #exportSaveBtn, #clearSaveBtn, #gameHelpBtn {
+     width: 100%; /* 让按钮撑满容器 */
+     min-width: auto;
+}
+#importSaveBtn { background: linear-gradient(to bottom, #2ca058, #1d6b3b); border-color: #3ac876; }
+#importSaveBtn:hover { background: linear-gradient(to bottom, #32b865, #228045); box-shadow: 0 0 8px rgba(58, 200, 118, 0.6); }
+#exportSaveBtn { background: linear-gradient(to bottom, #2c8ca0, #1d5b6b); border-color: #3ac8b0; }
+#exportSaveBtn:hover { background: linear-gradient(to bottom, #32a2b8, #226b80); box-shadow: 0 0 8px rgba(58, 200, 176, 0.6); }
+#clearSaveBtn { background: linear-gradient(to bottom, #a02c2c, #6b1d1d); border-color: #c83a3a; }
+#clearSaveBtn:hover { background: linear-gradient(to bottom, #b83232, #802222); box-shadow: 0 0 8px rgba(200, 58, 58, 0.6); }
+
+/* --- 弹窗通用样式 --- */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none; justify-content: center; align-items: center; z-index: 200;
+}
+.modal-content {
+    width: 600px; max-height: 80vh;
+    background: linear-gradient(to bottom, #0a1a25, #1a3b5c);
+    border: 2px solid #5d8aa8; border-radius: 8px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+    display: flex; flex-direction: column;
+}
+.modal-header {
+    padding: 12px; border-bottom: 1px solid #5d8aa8; /* <-- 修改: 减少内边距 */
+    display: flex; justify-content: space-between; align-items: center;
+}
+.modal-header h2 { color: #ffcc00; font-size: 18px; } /* <-- 修改: 缩小字体 */
+.modal-close {
+    font-size: 20px; color: #e0e0e0; cursor: pointer; /* <-- 修改: 缩小字体 */
+    border: none; background: none; font-weight: bold;
+}
+.modal-body { padding: 15px; overflow-y: auto; } /* <-- 修改: 减少内边距 */
+
+/* 新增：设置弹窗内的按钮布局 */
+.settings-button-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 两列布局 */
+    gap: 10px;
+}
+.settings-button-container .wow-button {
+    width: 100%;
+}
