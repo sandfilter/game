@@ -1,1 +1,56 @@
-function _0x3a71(_0x40791c,_0x498583){const _0x57a449=_0x349f();return _0x3a71=function(_0x2a9ce1,_0x2cff60){_0x2a9ce1=_0x2a9ce1-(0x7*0x2ae+-0x59*-0x1d+0x1*-0x1c29);let _0x5abed4=_0x57a449[_0x2a9ce1];return _0x5abed4;},_0x3a71(_0x40791c,_0x498583);}const _0x384bd3=_0x3a71;function _0x349f(){const _0x4bfc41=['5034Dfagab','1016iOSTQA','1644ewPwtL','#FF6347','#777777','1114NQfWnP','22897bsqfJp','18022770XEeCdV','#FFA500','3474168rflOKY','🛡️','#66B3FF','1603215NeQqAq','5703860XAcsxE','🗡️','1192aEbAEM'];_0x349f=function(){return _0x4bfc41;};return _0x349f();}(function(_0x17579b,_0x535e70){const _0x3b3d42=_0x3a71,_0x38a26b=_0x17579b();while(!![]){try{const _0x109f80=-parseInt(_0x3b3d42(0xb1))/(0x1f8d*-0x1+0x2d8+0x1cb6)*(parseInt(_0x3b3d42(0xbd))/(-0x1025*0x1+-0x1*-0x2552+0x1*-0x152b))+-parseInt(_0x3b3d42(0xbc))/(0x25d4*0x1+0x1*-0x1c76+-0x95b)*(parseInt(_0x3b3d42(0xbb))/(-0x1bb4+-0x1e2*0x6+0x2704))+parseInt(_0x3b3d42(0xb9))/(0x195e+-0x2*-0x56a+0x3f*-0x93)+parseInt(_0x3b3d42(0xae))/(0x11ad+-0x19af+0x808)*(-parseInt(_0x3b3d42(0xb2))/(-0x2*0x3d7+0x616+0x19f))+-parseInt(_0x3b3d42(0xb5))/(0x1b26*-0x1+-0xdb0+0x28de)+parseInt(_0x3b3d42(0xb8))/(0x1*-0x97d+0xe29+0x4a3*-0x1)+parseInt(_0x3b3d42(0xb3))/(-0xc97+0xd*0x18b+-0x76e);if(_0x109f80===_0x535e70)break;else _0x38a26b['push'](_0x38a26b['shift']());}catch(_0x9b2f37){_0x38a26b['push'](_0x38a26b['shift']());}}}(_0x349f,-0x98e5*-0x1e+-0x6bcb7*-0x1+-0xd98ae));export const BASE_BATTLE_SPEED_MULTIPLIER=0x20bc+0x47*-0xf+-0x1c92;export const GAME_CONFIG={'canvas':{'width':0x384,'height':0x258},'hero':{'baseCount':0xa,'emojis':['⚔️',_0x384bd3(0xb6),'🧙','🏹','🪓',_0x384bd3(0xba),'🧝','🤺','🦸','🧚'],'maxHp':0x64,'speedRange':[-0x5d*-0x52+0x251+0xb*-0x2eb,0x752+0x142*-0x7+-0x1*-0x17f],'attackSpeedRange':[0x948+-0x1a85+-0x5bf*-0x3+0.8,0xf20+0x21e4+-0x3103+0.5],'damageRange':[0x1537+-0x2087*0x1+-0x1*-0xb55,-0x1a2e+-0x3a2+0x1dda*0x1],'size':0x10,'colors':{'healthy':_0x384bd3(0xb7),'injured':_0x384bd3(0xb4),'critical':_0x384bd3(0xaf),'dead':_0x384bd3(0xb0)}},'monsterScene':{'monsterCount':0x7,'monsterEmojis':['👹','👺','👻','🤡','🎃','🐉','🦇'],'monsterMaxHp':0x64,'monsterDamage':0xa,'monsterAttackInterval':0x7d0,'monsterSize':0x10,'monsterAttackRange':0x96,'eliteIndices':[-0x1b15*-0x1+-0x137a+-0x798,0x2e*0x54+-0x58*-0x51+0x6*-0x727],'eliteEmojis':['👾','🤖','🦂','🦑','🐲'],'eliteMaxHp':0xc8,'eliteDamage':0xf,'eliteSize':0x18},'bossScene':{'possibleHeroCounts':[0x10a9+-0xb2+-0xff2,0x1405+-0x64*-0x63+-0x5b*0xa5,-0x1*0x1033+0x7a3*0x5+0x15e3*-0x1],'bossEmojis':['👹','🐉','👾','🤖'],'bossBaseHp':0x3e8,'bossHpPerHero':0x3c,'bossSize':0xa,'bossAttackInterval':2.5,'bossAttackRange':0xdc,'bossDamageBase':0x14,'bossDamageExtra':0x10,'bossDamageBonus':0xa}};
+/**
+ * ==================================================================
+ * battle-config.js
+ * (拆分自 battle-config.js)
+ *
+ * 职责:
+ * 1. 存放 GAME_CONFIG (供战斗动画使用)。
+ * 2. (已修正) 存放基础战斗速度。
+ * ==================================================================
+ */
+
+// (修正) 战斗速度倍率 (基础值，熟练度会在此之上增加)
+//
+export const BASE_BATTLE_SPEED_MULTIPLIER = 1.0;
+
+// --- 动画配置 ---
+//
+export const GAME_CONFIG = { 
+    canvas: { width: 900, height: 600 }, //
+    hero: { //
+        baseCount: 10, //
+        emojis: ["⚔️", "🛡️", "🧙", "🏹", "🪓", "🗡️", "🧝", "🤺", "🦸", "🧚"], //
+        maxHp: 100, // (基础血量)
+        speedRange: [2.0, 3.0], //
+        attackSpeedRange: [0.8, 1.5], //
+        damageRange: [5, 10], // (基础伤害)
+        size: 16, //
+        colors: { healthy: '#66B3FF', injured: '#FFA500', critical: '#FF6347', dead: '#777777' } //
+    }, 
+    monsterScene: { //
+        monsterCount: 7, //
+        monsterEmojis: ["👹", "👺", "👻", "🤡", "🎃", "🐉", "🦇"], //
+        monsterMaxHp: 100, //
+        monsterDamage: 10, //
+        monsterAttackInterval: 2000, //
+        monsterSize: 16, //
+        monsterAttackRange: 150, //
+        eliteIndices: [3, 6], //
+        eliteEmojis: ["👾", "🤖", "🦂", "🦑", "🐲"], //
+        eliteMaxHp: 200, //
+        eliteDamage: 15, //
+        eliteSize: 24 //
+    }, 
+    bossScene: { //
+        possibleHeroCounts: [5, 10, 25], //
+        bossEmojis: ["👹", "🐉", "👾", "🤖"], //
+        bossBaseHp: 1000, //
+        bossHpPerHero: 60, //
+        bossSize: 10, //
+        bossAttackInterval: 2.5, //
+        bossAttackRange: 220, //
+        bossDamageBase: 20, //
+        bossDamageExtra: 16, //
+        bossDamageBonus: 10 //
+    } 
+};
