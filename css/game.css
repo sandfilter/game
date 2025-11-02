@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 357px; /* <-- 计算/修改: 缩短最小高度约 20% */
+    min-height: 357px; /* */
 }
 
 .animation-area canvas {
@@ -23,35 +23,40 @@
 
 .instructions {
     position: absolute;
-    bottom: 8px; /* <-- 修改: 稍微上移一点 */
+    bottom: 8px; /* */
     left: 50%;
     transform: translateX(-50%);
-    font-size: 13px; /* <-- 修改: 略微缩小字体 */
+    font-size: 13px; /* */
     color: #bbb;
     text-align: center;
     z-index: 10;
     background: rgba(0,0,0,0.4);
-    padding: 4px 8px; /* <-- 修改: 减少内边距 */
+    padding: 4px 8px; /* */
     border-radius: 5px;
+    /* Optional: Style for boss quotes */
+    &.boss-quote {
+        color: #ffcc00; /* Example: Gold color for quotes */
+        font-style: italic;
+    }
 }
 
 /* 战斗模拟样式 (结果屏幕) */
 #resultScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 100; border-radius: 6px; }
-.result-text { font-size: 32px; color: gold; margin-bottom: 15px; text-align: center; } /* <-- 修改: 缩小字体和间距 */
-.stats-text { font-size: 20px; margin: 8px 0; text-align: center; } /* <-- 修改: 缩小字体和间距 */
-.countdown-text { font-size: 18px; margin-top: 30px; color: #fca311; text-align: center; } /* <-- 修改: 缩小字体和间距 */
-.scene-indicator { position: absolute; top: 8px; left: 8px; background-color: rgba(0, 0, 0, 0.5); padding: 6px 10px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 13px; } /* <-- 修改: 调整位置/内边距/字体 */
+.result-text { font-size: 32px; color: gold; margin-bottom: 15px; text-align: center; } /* */
+.stats-text { font-size: 20px; margin: 8px 0; text-align: center; } /* */
+.countdown-text { font-size: 18px; margin-top: 30px; color: #fca311; text-align: center; } /* */
+.scene-indicator { position: absolute; top: 8px; left: 8px; background-color: rgba(0, 0, 0, 0.5); padding: 6px 10px; border-radius: 4px; font-weight: bold; z-index: 10; font-size: 13px; } /* */
 
 
 /* --- 消息区域样式 --- */
-.message-header { display: flex; align-items: center; margin-bottom: 8px; font-weight: bold; color: #ffcc00; } /* <-- 修改: 减少下边距 */
+.message-header { display: flex; align-items: center; margin-bottom: 8px; font-weight: bold; color: #ffcc00; } /* */
 .message-container {
     background: #0c151f;
     border: 2px solid #5d8aa8;
     border-radius: 6px;
-    height: 200px; /* <-- 修改: 缩短高度 */
+    height: 200px; /* */
     overflow-y: auto;
-    padding: 8px; /* <-- 修改: 减少内边距 */
+    padding: 8px; /* */
 }
 .message { margin-bottom: 2px; padding: 2px 5px; border-bottom: none; font-size: 13px; }
 .system { color: #FF9900; }
@@ -63,35 +68,35 @@
 /* --- 副本进度区域样式 (侧边栏) --- */
 .dungeon-progress-area {
     width: 300px;
-    height: 250px; /* <-- 修改: 缩短高度 */
+    height: 250px; /* */
     background: #0c151f;
     border: 2px solid #5d8aa8; border-radius: 6px;
     display: flex; flex-direction: column;
 }
-.progress-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* <-- 修改: 减少内边距 */
-.boss-list { flex: 1; padding: 8px; overflow-y: auto; list-style: none; } /* <-- 修改: 减少内边距 */
-.boss-item { padding: 4px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* <-- 修改: 减少内边距和字体大小 */
+.progress-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* */
+.boss-list { flex: 1; padding: 8px; overflow-y: auto; list-style: none; } /* */
+.boss-item { padding: 4px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* */
 .boss-item.current { color: #ffcc00; font-weight: bold; }
 .boss-item.completed { color: #88dd88; text-decoration: line-through; }
 .boss-item:last-child { border-bottom: none; }
-.progress-button-container { padding: 8px; text-align: center; } /* <-- 修改: 减少内边距 */
+.progress-button-container { padding: 8px; text-align: center; } /* */
 
 /* --- 任务区域样式 (侧边栏) --- */
 .quest-area { flex: 1; background: #0c151f; border: 2px solid #5d8aa8; border-radius: 6px; display: flex; flex-direction: column; }
-.quest-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* <-- 修改: 减少内边距 */
-.quest-list { flex: 1; padding: 8px; overflow-y: auto; } /* <-- 修改: 减少内边距 */
-.quest-item { padding: 6px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* <-- 修改: 减少内边距和字体大小 */
+.quest-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* */
+.quest-list { flex: 1; padding: 8px; overflow-y: auto; } /* */
+.quest-item { padding: 6px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* */
 .quest-item:last-child { border-bottom: none; }
-.quest-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; } /* <-- 修改: 减少上边距 */
-.quest-claim-btn { padding: 3px 6px; background: #3a6187; border: 1px solid #5d8aa8; color: #e0e0e0; border-radius: 3px; cursor: pointer; font-size: 12px; } /* <-- 修改: 减少内边距和字体大小 */
+.quest-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; } /* */
+.quest-claim-btn { padding: 3px 6px; background: #3a6187; border: 1px solid #5d8aa8; color: #e0e0e0; border-radius: 3px; cursor: pointer; font-size: 12px; } /* */
 .quest-claim-btn:disabled { background: #2a3b4a; color: #777; cursor: not-allowed; }
 
 /* --- 地下城进度弹窗 (内容) --- */
-.dungeon-list-container { display: flex; gap: 15px; } /* <-- 修改: 减少间隙 */
+.dungeon-list-container { display: flex; gap: 15px; } /* */
 .dungeon-list { flex: 1; }
-.dungeon-list h3 { color: #aaddff; margin-bottom: 8px; border-bottom: 1px solid #4a79ab; padding-bottom: 4px; font-size: 15px;} /* <-- 修改: 调整间距/字体 */
+.dungeon-list h3 { color: #aaddff; margin-bottom: 8px; border-bottom: 1px solid #4a79ab; padding-bottom: 4px; font-size: 15px;} /* */
 .dungeon-list ul { list-style: none; padding: 0; margin: 0; }
-.dungeon-list li { padding: 3px; border-radius: 4px; margin-bottom: 2px; background: #0c151f; transition: background-color 0.2s; font-size: 13px; } /* <-- 修改: 减少内边距/字体 */
+.dungeon-list li { padding: 3px; border-radius: 4px; margin-bottom: 2px; background: #0c151f; transition: background-color 0.2s; font-size: 13px; } /* */
 .dungeon-list li:hover { background-color: #1a3b5c; cursor: pointer; }
 .dungeon-list li.completed { color: #88dd88; }
 .dungeon-list li.current { background-color: #fca311; color: #000; font-weight: bold; }
@@ -101,14 +106,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px; /* <-- 修改: 减少内边距 */
-    margin-bottom: 6px; /* <-- 修改: 减少间距 */
+    padding: 8px; /* */
+    margin-bottom: 6px; /* */
     background: #0c151f;
     border: 1px solid #2c4459;
     border-radius: 4px;
 }
 .exchange-info {
-    font-size: 13px; /* <-- 修改: 缩小字体 */
+    font-size: 13px; /* */
     line-height: 1.4;
 }
 .exchange-info .badge-name {
@@ -119,17 +124,17 @@
 .exchange-currency-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6px 12px; /* <-- 修改: 减少间隙 */
-    padding: 8px; /* <-- 修改: 减少内边距 */
+    gap: 6px 12px; /* */
+    padding: 8px; /* */
     background: #0c151f;
     border: 1px solid #2c4459;
     border-radius: 4px;
-    margin-bottom: 12px; /* <-- 修改: 减少间距 */
+    margin-bottom: 12px; /* */
 }
 .currency-item {
     display: flex;
     justify-content: space-between;
-    font-size: 13px; /* <-- 修改: 缩小字体 */
+    font-size: 13px; /* */
     color: #e0e0e0;
 }
 .currency-item span:first-child {
@@ -141,79 +146,254 @@
 .exchange-divider {
     border: none;
     border-top: 1px solid #5d8aa8;
-    margin: 12px 0; /* <-- 修改: 减少间距 */
+    margin: 12px 0; /* */
 }
 .modal-body h3 {
-     font-size: 16px; /* <-- 修改: 缩小标题字体 */
-     margin-bottom: 8px; /* <-- 修改: 减少下边距 */
+     font-size: 16px; /* */
+     margin-bottom: 8px; /* */
      color: #aaddff;
 }
 
 /* --- 页脚信息样式 --- */
 .footer-info {
     text-align: right;
-    padding: 6px 12px; /* <-- 修改: 减少内边距 */
-    font-size: 11px; /* <-- 修改: 缩小字体 */
+    padding: 6px 12px; /* */
+    font-size: 11px; /* */
     color: #7a9bb7;
     background-color: #112233;
     border-top: 1px solid #2c4459;
 }
 
-/* --- 角色面板样式 --- */
-.character-pane {
-    width: 700px; /* 调整宽度 */
+
+/* --- New Character Panel Styles --- */
+.character-pane { /* */
+    width: 650px; /* Adjust width as needed */ /* */
 }
 
-.character-layout {
+.character-detailed-layout { /* */
+    display: flex; /* */
+    gap: 15px; /* Space between equipment and stats */ /* */
+    padding: 10px; /* Padding inside the modal body */ /* */
+}
+
+/* Equipment Column */
+.character-equipment { /* */
+    width: 260px; /* Fixed width for the equipment grid area */ /* */
+    flex-shrink: 0; /* Prevent shrinking */ /* */
+}
+
+.equipment-grid-wow { /* */
+    display: grid; /* */
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for Left, Center(Gap), Right */ /* */
+    /* <<< (修改) 8行用于装备, 第9行用于武器 (圣物行已移除) >>> */
+    grid-template-rows: repeat(9, auto); /* 8 rows for gear + 1 row for weapons */
+    gap: 5px; /* Small gap between slots */ /* */
+    
+    /* <<< (修改) grid-template-areas 只有 8 行 (圣物行已移除) >>> */
+    grid-template-areas: /* */
+        "head     .      hands"
+        "neck     .      waist"
+        "shoulder .      legs"
+        "back     .      feet"
+        "chest    .      finger1"
+        "shirt    .      finger2"
+        "tabard   .      trinket1"
+        "wrist    .      trinket2";
+        /* (武器槽将使用 grid-row / grid-column 手动放置) */
+}
+
+/* Base style for all slots */
+.equipment-grid-wow .equip-slot { /* */
+    border: 1px solid #4a79ab; /* */
+    background-color: rgba(12, 21, 31, 0.7); /* */
+    border-radius: 4px; /* */
+    min-height: 55px; /* Slightly smaller height */ /* */
+    display: flex; /* */
+    flex-direction: column; /* */
+    align-items: center; /* */
+    justify-content: center; /* */
+    text-align: center; /* */
+    font-size: 11px; /* Smaller text */ /* */
+    color: #ccc; /* */
+    padding: 3px; /* */
+    box-sizing: border-box; /* Include padding/border in size */ /* */
+}
+
+.equipment-grid-wow .equip-slot span { /* */
+    font-size: 13px; /* */
+    font-weight: bold; /* */
+    color: #fff; /* */
+    margin-bottom: 2px; /* */
+    line-height: 1.2;
+    word-break: break-all;
+}
+
+/* Assign slots to grid areas */
+.slot-head { grid-area: head; } /* */
+.slot-neck { grid-area: neck; } /* */
+.slot-shoulder { grid-area: shoulder; } /* */
+.slot-back { grid-area: back; } /* */
+.slot-chest { grid-area: chest; } /* */
+.slot-shirt { grid-area: shirt; background-color: rgba(25, 40, 55, 0.7); } /* */
+.slot-tabard { grid-area: tabard; background-color: rgba(25, 40, 55, 0.7); } /* */
+.slot-wrist { grid-area: wrist; } /* */
+.slot-hands { grid-area: hands; } /* */
+.slot-waist { grid-area: waist; } /* */
+.slot-legs { grid-area: legs; } /* */
+.slot-feet { grid-area: feet; } /* */
+.slot-finger1 { grid-area: finger1; } /* */
+.slot-finger2 { grid-area: finger2; } /* */
+.slot-trinket1 { grid-area: trinket1; } /* */
+.slot-trinket2 { grid-area: trinket2; } /* */
+
+/* <<< (修改) 武器槽位 (圣物槽已移除) */
+.slot-mainhand {
+    grid-row: 9 / 10;    /* 放在第 9 行 */
+    grid-column: 1 / 2; /* 放在第 1 列 */
+    margin-top: 5px;    /* 与上面的槽位留出间距 */
+}
+.slot-offhand {
+    grid-row: 9 / 10;    /* 放在第 9 行 */
+    grid-column: 3 / 4; /* 放在第 3 列 */
+    margin-top: 5px;    /* 与上面的槽位留出间距 */
+}
+/* (移除了 .slot-relic) */
+
+
+/* Stats Column */
+.character-stats-detailed { /* */
+    flex: 1; /* Take remaining space */ /* */
+    color: #ccc; /* */
+    font-size: 13px; /* */
+    line-height: 1.6; /* */
+}
+
+.char-name-level { /* */
+    text-align: center; /* */
+    margin-bottom: 15px; /* */
+}
+
+.char-name { /* */
+    font-size: 1.2em; /* */
+    font-weight: bold; /* */
+    color: #ffcc00; /* Gold color for name */ /* */
+}
+
+.stats-section { /* */
+    margin-bottom: 15px; /* */
+    padding-bottom: 10px; /* */
+    border-bottom: 1px solid #2c4459; /* */
+}
+.stats-section:last-child { /* */
+    border-bottom: none; /* */
+    margin-bottom: 0; /* */
+}
+
+.stats-section h3 { /* */
+    color: #aaddff; /* */
+    font-size: 1.1em; /* */
+    margin-bottom: 8px; /* */
+}
+
+.stats-section p { /* */
+    margin-bottom: 3px; /* */
+    display: flex; /* Align text and value */ /* */
+    justify-content: space-between; /* Push value to the right */ /* */
+}
+.stats-section p span { /* */
+    color: #fff; /* White color for stat values */ /* */
+    font-weight: bold; /* */
+    margin-left: 10px; /* Space between label and value */ /* */
+}
+
+
+/* --- 物品稀有度样式 --- */
+.equip-slot.uncommon { /* */
+    border-color: #1eff00; /* 绿色 */ /* */
+}
+.equip-slot.rare { /* */
+    border-color: #0070dd; /* 蓝色 */ /* */
+}
+.equip-slot.epic { /* */
+    border-color: #a335ee; /* 紫色 */ /* */
+}
+.equip-slot.legendary { /* */
+    border-color: #ff8000; /* 橙色 */
+}
+
+/* 稀有度文字颜色 */
+.equip-slot.uncommon span { color: #1eff00; } /* */
+.equip-slot.rare span { color: #0070dd; } /* */
+.equip-slot.epic span { color: #a335ee; } /* */
+.equip-slot.legendary span { color: #ff8000; }
+
+
+/* --- 物品提示框 (Tooltip) 样式 --- */
+#itemTooltip { /* */
+    display: none; /* 默认隐藏 */ /* */
+    position: fixed; /* 相对视窗定位，使其浮动在一切之上 */ /* */
+    z-index: 1000; /* 确保在所有弹窗 (z-index: 200) 之上 */ /* */
+    background: rgba(0, 0, 0, 0.9); /* 仿魔兽世界深色背景 */ /* */
+    border: 1px solid #888; /* */
+    border-radius: 4px; /* */
+    padding: 10px; /* */
+    width: max-content; /* 宽度自适应内容 */ /* */
+    min-width: 150px; /* */
+    color: #fff; /* */
+    font-size: 13px; /* */
+    line-height: 1.5; /* */
+    pointer-events: none; /* */
+}
+
+.tooltip-name { /* */
+    font-weight: bold; /* */
+    font-size: 15px; /* */
+    margin-bottom: 5px; /* */
+}
+.tooltip-gearscore { /* */
+    color: #ffd700; /* 金色显示装等 */ /* */
+}
+.tooltip-slot { /* */
+    color: #999; /* 灰色显示槽位 */ /* */
+    margin-top: 5px; /* */
+}
+
+/* --- 稀有度文字颜色 (用于 Tooltip) --- */
+.rarity-common { color: #ffffff; } /* */
+.rarity-uncommon { color: #1eff00; } /* */
+.rarity-rare { color: #0070dd; } /* */
+.rarity-epic { color: #a335ee; } /* */
+.rarity-legendary { color: #ff8000; } /* */
+
+
+/* --- (新增) 收藏品弹窗 (内容) --- */
+.collectibles-list {
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    gap: 8px;
 }
-
-.character-stats {
-    width: 200px; /* 属性区域宽度 */
-    padding-right: 20px;
-    border-right: 1px solid #2c4459;
-}
-
-.character-stats h3 {
-    margin-bottom: 10px;
-    color: #aaddff;
-}
-
-.equipment-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 调整为3列，左右装备，中间空白 */
-    gap: 10px;
-}
-
-.equip-slot {
-    border: 1px solid #4a79ab;
-    background-color: rgba(12, 21, 31, 0.7);
-    border-radius: 4px;
-    min-height: 60px; /* 确保格子有高度 */
+.collectible-item {
     display: flex;
-    flex-direction: column; /* 图标在上，文字在下 */
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    text-align: center;
+    padding: 10px;
+    background: #0c151f;
+    border: 1px solid #2c4459;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.collectible-name {
+    font-weight: bold;
+}
+.collectible-type {
     font-size: 12px;
-    color: #ccc;
-    padding: 5px;
+    color: #999;
+    font-style: italic;
 }
-
-.equip-slot span {
-    font-size: 24px; /* 表情符号大小 */
-    margin-bottom: 4px;
+/* 收藏品稀有度颜色 */
+.collectible-item.rarity-epic .collectible-name {
+    color: #a335ee; /* 紫色 */
 }
-
-/* 中间空白列的样式 */
-.equip-slot.empty-left {
-    border: none;
-    background: none;
-}
-
-/* 武器槽位可以单独设置样式 */
-.equip-slot.weapon-slot {
-   /* 可以加特殊边框或其他 */
+.collectible-item.rarity-legendary .collectible-name {
+    color: #ff8000; /* 橙色 */
 }

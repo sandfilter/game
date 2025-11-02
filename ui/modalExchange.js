@@ -1,7 +1,8 @@
 /**
  * ==================================================================
  * ui/modalExchange.js
- * (已修改：移除重复的 buildExchangeModalHTML 函数定义)
+ * (已修改：移除了重复的 openExchangeModal 函数定义)
+ * (已修正：移除延迟查找逻辑)
  * ==================================================================
  */
 
@@ -16,30 +17,41 @@ let isExchangeBodyListenerAttached = false; //
  * 构建兑换中心弹窗的HTML
  */
 function buildExchangeModalHTML() { //
+    
     let html = '<h3>💰 我的货币</h3>'; //
     html += '<div class="exchange-currency-grid">'; //
+    
     html += `<div class="currency-item"><span>🛡️ 英雄徽章:</span> <span>${gameState.badges?.heroism ?? 0}</span></div>`; //
     html += `<div class="currency-item"><span>🔥 勇气徽章:</span> <span>${gameState.badges?.valor ?? 0}</span></div>`; //
     html += `<div class="currency-item"><span>🏆 征服徽章:</span> <span>${gameState.badges?.conquest ?? 0}</span></div>`; //
     html += `<div class="currency-item"><span>🏅 凯旋徽章:</span> <span>${gameState.badges?.triumph ?? 0}</span></div>`; //
     html += `<div class="currency-item"><span>❄️ 寒冰徽章:</span> <span>${gameState.badges?.frost ?? 0}</span></div>`; //
+    html += `<div class="currency-item"><span>💎 深渊水晶:</span> <span>${gameState.badges?.abyssCrystal ?? 0}</span></div>`; //
+
     html += `<div class="currency-item"><span>🔸 埃提耶什的碎片:</span> <span>${Number(gameState.legendaryShards?.atiyehsuide) || 0}</span></div>`; //
     html += `<div class="currency-item"><span>🔸 瓦兰奈尔的碎片:</span> <span>${Number(gameState.legendaryShards?.walanaiersuide) || 0}</span></div>`; //
     html += `<div class="currency-item"><span>🔸 炉石传说的碎片:</span> <span>${Number(gameState.legendaryShards?.lushichuanshuodesuide) || 0}</span></div>`; //
     html += `<div class="currency-item"><span>🔸 影之碎片:</span> <span>${Number(gameState.legendaryShards?.yingzhisuide) || 0}</span></div>`; //
     html += `<div class="currency-item"><span>🔸 霜之碎片:</span> <span>${Number(gameState.legendaryShards?.shuangzhisuide) || 0}</span></div>`; //
+    
     html += '</div>'; //
+    
     html += '<hr class="exchange-divider">'; //
-    html += '<h3>🔄 徽章兑换</h3>'; //
+    
+    html += '<h3>🔄 货币兑换</h3>'; //
+    
     const rules = GAME_DATA.游戏数据.徽章兑换规则; //
-    const badgeKeyMap = { "英雄徽章": "heroism", "勇气徽章": "valor", "征服徽章": "conquest", "凯旋徽章": "triumph", "寒冰徽章": "frost" }; //
+    const badgeKeyMap = { "英雄徽章": "heroism", "勇气徽章": "valor", "征服徽章": "conquest", "凯旋徽章": "triumph", "寒冰徽章": "frost", "深渊水晶": "abyssCrystal" }; //
+
     for (const badgeName in rules) { //
         const rule = rules[badgeName]; //
         const currentBadgeKey = badgeKeyMap[badgeName]; //
-        // Ensure gameState.badges and the specific key exist before accessing
+        
         const currentBadgeCount = (gameState.badges && gameState.badges[currentBadgeKey]) ? gameState.badges[currentBadgeKey] : 0; //
         const hasBadges = currentBadgeCount >= rule.兑换比例; //
+        
         const disabledState = hasBadges ? '' : 'disabled'; //
+
         html += `
             <div class="exchange-item">
                 <div class="exchange-info">
@@ -55,25 +67,15 @@ function buildExchangeModalHTML() { //
     return html; //
 }
 
-// --- REMOVED DUPLICATE DEFINITION ---
-/*
-function buildExchangeModalHTML() { ... }
-*/
-
 
 /**
  * 打开兑换弹窗
+ * (已修正：移除延迟查找)
  */
 export function openExchangeModal(exchangeCallback) { //
-    // Find internal elements only when opening
-    if (!elements.exchangeModalCloseBtn) { //
-        elements.exchangeModalCloseBtn = document.getElementById('exchangeModalCloseBtn'); //
-        console.log("Found exchangeModalCloseBtn on open:", elements.exchangeModalCloseBtn); //
-    }
-    if (!elements.exchangeModalBody) { //
-        elements.exchangeModalBody = document.getElementById('exchangeModalBody'); //
-        console.log("Found exchangeModalBody on open:", elements.exchangeModalBody); //
-    }
+    // (已移除) 延迟查找
+    // if (!elements.exchangeModalCloseBtn) { ... }
+    // if (!elements.exchangeModalBody) { ... }
 
     // Bind close listener only ONCE
     if (elements.exchangeModalCloseBtn && !isExchangeCloseBtnListenerAttached) { //
@@ -114,16 +116,14 @@ export function openExchangeModal(exchangeCallback) { //
 
 /**
  * 刷新兑换弹窗的内容
+ * (已修正：移除延迟查找)
  */
 export function updateExchangeModal(exchangeCallback) { //
-    // Ensure body is found before updating
+    // (已移除) 延迟查找
     if (!elements.exchangeModalBody) { //
-        elements.exchangeModalBody = document.getElementById('exchangeModalBody'); //
-         if (!elements.exchangeModalBody) { //
-             console.error("Cannot update exchange modal: exchangeModalBody not found."); //
-             return; //
-         }
-    }
+         console.error("Cannot update exchange modal: exchangeModalBody not found (initElements failed?)."); //
+         return; //
+     }
 
     try { //
         // Just update the innerHTML, the delegated listener on the body will handle clicks

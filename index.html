@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>挂鸡污喵王内测版0.1</title>
+    <title>挂鸡污喵王内测版0.2</title>
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
@@ -38,7 +38,7 @@
                 </div>
                 <div class="message-section">
                     <div class="message-header"><span>📜 消息日志</span></div>
-                    <div class="message-container" id="messageContainer"><div class="message system">📢 欢迎来到挂鸡污喵王内测版0.1！</div><div class="message system">📢 游戏已初始化，请选择一个地下城开始冒险！</div></div>
+                    <div class="message-container" id="messageContainer"><div class="message system">📢 欢迎来到挂鸡污喵王内测版！</div><div class="message system">📢 游戏已初始化，请选择一个地下城开始冒险！</div></div>
                 </div>
             </div>
             <div class="sidebar-column">
@@ -63,6 +63,7 @@
                 <div class="wow-button" id="dungeon10Btn">10人团队副本</div>
                 <div class="wow-button" id="dungeon25Btn">25人团队副本</div>
                 <div class="wow-button" id="exchangeBtn">兑换中心</div>
+                <div class="wow-button" id="collectiblesBtn">收藏品</div>
             </div>
         </div>
 
@@ -95,7 +96,6 @@
             </div>
         </div>
     </div>
-
     <div id="exchangeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -106,7 +106,6 @@
             </div>
         </div>
     </div>
-
     <div id="settingsModal" class="modal">
         <div class="modal-content" style="width: 400px;">
              <div class="modal-header">
@@ -121,7 +120,6 @@
             </div>
         </div>
     </div>
-
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -129,71 +127,111 @@
                 <button class="modal-close" id="helpModalCloseBtn">&times;</button>
             </div>
             <div class="modal-body">
-                <h3>欢迎！</h3>
-                <p>这是一款放置挂机游戏，灵感来自《魔兽世界：巫妖王之怒》。</p>
+                <h3>来了老弟！</h3>
+                <p>我是污喵王，以前叫阿尔傻斯。这游戏的名字是《挂鸡污喵王》，QQ群63825952</p>
                 <br>
                 <h3>游戏目标：</h3>
                 <ul>
                     <li>通过挑战 5/10/25 人副本提升你的装备等级。</li>
                     <li>在 25 人副本“纳克萨玛斯”中收集“埃提耶什的碎片”。</li>
-                    <li>完成任务，铸造传说武器！</li>
+                    <li>完成任务，铸造传说武器：埃提耶什·守护者的传说之杖！</li>
                 </ul>
                 <br>
                 <h3>提示：</h3>
                 <ul>
-                    <li>挑战10人副本需要 200 装等，25人副本需要 213 装等。</li>
-                    <li>战斗是自动进行的。</li>
-                    <li>徽章可以在“兑换中心”换取装备等级或金币。</li>
+                    <li>因每次更新改动较大，内测版存档可能在更新后无法继承，请见谅。</li>
+                    <li>每当完成所有5人地下城，所有地下城的进度将重置。</li>
+                    <li>熟练度可略微增加勇士们攻击速度和移动速度；装备等级可增加勇士们的攻击力和血量。</li>
+                    <li>增加25人永恒之眼低掉率收藏品[碧蓝幼龙的缰绳]，25人黑曜石圣殿低掉率收藏品[暮光幼龙的缰绳]。</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <div id="characterModal" class="modal">
-        <div class="modal-content character-pane"> <div class="modal-header">
+        <div class="modal-content character-pane">
+            <div class="modal-header">
                 <h2>角色信息</h2>
                 <button class="modal-close" id="characterModalCloseBtn">&times;</button>
             </div>
-            <div class="modal-body character-layout">
-                <div class="character-stats">
-                    <h3>属性 (待添加)</h3>
-                    <p>装备等级: <span id="charGearScoreDisplay">...</span></p>
+            <div class="modal-body character-detailed-layout">
+                
+                <div class="character-equipment">
+                    <div class="equipment-grid-wow">
+                        <div class="equip-slot slot-head" data-slot="head"><span>👑</span><br>头部</div>
+                        <div class="equip-slot slot-neck" data-slot="neck"><span>💎</span><br>颈部</div>
+                        <div class="equip-slot slot-shoulder" data-slot="shoulder"><span>💪</span><br>肩部</div>
+                        <div class="equip-slot slot-back" data-slot="back"><span>🎒</span><br>背部</div>
+                        <div class="equip-slot slot-chest" data-slot="chest"><span>👕</span><br>胸部</div>
+                        <div class="equip-slot slot-shirt" data-slot="shirt"><span>👔</span><br>衬衣</div>
+                        <div class="equip-slot slot-tabard" data-slot="tabard"><span>🚩</span><br>战袍</div>
+                        <div class="equip-slot slot-wrist" data-slot="wrist"><span>⌚</span><br>手腕</div>
+                        <div class="equip-slot slot-hands" data-slot="hands"><span>🧤</span><br>手套</div>
+                        <div class="equip-slot slot-waist" data-slot="waist"><span>〰️</span><br>腰带</div>
+                        <div class="equip-slot slot-legs" data-slot="legs"><span>👖</span><br>腿部</div>
+                        <div class="equip-slot slot-feet" data-slot="feet"><span>👢</span><br>脚</div>
+                        <div class="equip-slot slot-finger1" data-slot="finger1"><span>💍</span><br>手指1</div>
+                        <div class="equip-slot slot-finger2" data-slot="finger2"><span>💍</span><br>手指2</div>
+                        <div class="equip-slot slot-trinket1" data-slot="trinket1"><span>✨</span><br>饰品1</div>
+                        <div class="equip-slot slot-trinket2" data-slot="trinket2"><span>✨</span><br>饰品2</div>
+                        <div class="equip-slot slot-mainhand" data-slot="mainhand"><span>⚔️</span><br>主手</div>
+                        <div class="equip-slot slot-offhand" data-slot="offhand"><span>🛡️</span><br>副手</div>
+                        </div>
                 </div>
-                <div class="equipment-grid">
-                    <div class="equip-slot" data-slot="head"><span>👑</span><br>头部</div>
-                    <div class="equip-slot empty-left"></div> <div class="equip-slot" data-slot="shoulder"><span>💪</span><br>肩部</div>
 
-                    <div class="equip-slot" data-slot="neck"><span>💎</span><br>颈部</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot" data-slot="back"><span>🎒</span><br>背部</div>
+                <div class="character-stats-detailed">
+                    <div class="char-name-level">
+                        <span class="char-name">挂机英雄</span>
+                    </div>
 
-                    <div class="equip-slot" data-slot="chest"><span>👕</span><br>胸部</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot" data-slot="wrist"><span>⌚</span><br>手腕</div>
+                    <div class="stats-section">
+                        <h3>基本属性</h3>
+                        <p>熟练度: <span id="charProficiencyDisplay">...</span></p>
+                        <p>装备等级: <span id="charGearScoreDisplay">...</span></p>
+                        <p>金币: <span id="charGoldDisplay">...</span></p>
+                    </div>
 
-                    <div class="equip-slot" data-slot="hands"><span>🧤</span><br>手套</div>
-                    <div class="equip-slot empty-left"></div>
-                     <div class="equip-slot" data-slot="waist"><span>〰️</span><br>腰带</div>
+                     <div class="stats-section">
+                        <h3>徽章</h3>
+                        <p>💎 深渊水晶: <span id="charAbyssCrystalDisplay">--</span></p>
+                        <p>🛡️ 英雄徽章: <span id="charHeroismDisplay">--</span></p>
+                        <p>🔥 勇气徽章: <span id="charValorDisplay">--</span></p>
+                        <p>🏆 征服徽章: <span id="charConquestDisplay">--</span></p>
+                        <p>🏅 凯旋徽章: <span id="charTriumphDisplay">--</span></p>
+                        <p>❄️ 寒冰徽章: <span id="charFrostDisplay">--</span></p>
+                    </div>
 
-                    <div class="equip-slot" data-slot="legs"><span>👖</span><br>腿部</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot" data-slot="feet"><span>👢</span><br>脚</div>
-
-                    <div class="equip-slot" data-slot="finger1"><span>💍</span><br>手指1</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot" data-slot="finger2"><span>💍</span><br>手指2</div>
-
-                    <div class="equip-slot" data-slot="trinket1"><span>✨</span><br>饰品1</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot" data-slot="trinket2"><span>✨</span><br>饰品2</div>
-
-                    <div class="equip-slot weapon-slot" data-slot="mainhand"><span>⚔️</span><br>主手</div>
-                    <div class="equip-slot empty-left"></div>
-                    <div class="equip-slot weapon-slot" data-slot="offhand"><span>🛡️</span><br>副手</div>
+                     <div class="stats-section">
+                        <h3>传说碎片</h3>
+                        <p>🔸 埃提耶什: <span id="charAtiyehsuideDisplay">--</span></p>
+                         <p>🔸 瓦兰奈尔: <span id="charWalanaiersuideDisplay">--</span></p>
+                        <p>🔸 炉石传说: <span id="charLushichuanshuodesuideDisplay">--</span></p>
+                         <p>🔸 影之碎片: <span id="charYingzhisuideDisplay">--</span></p>
+                         <p>🔸 霜之碎片: <span id="charShuangzhisuideDisplay">--</span></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="collectiblesModal" class="modal">
+        <div class="modal-content" style="width: 400px;">
+             <div class="modal-header">
+                <h2>⭐ 收藏品</h2>
+                <button class="modal-close" id="collectiblesModalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="collectiblesModalBody">
+                <p>这里将显示您获得的传说物品和坐骑。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="itemTooltip" style="display: none;">
+        <div class="tooltip-name rarity-common">物品名称</div>
+        <div class="tooltip-gearscore">装备等级: 0</div>
+        <div class="tooltip-slot">头部</div>
+    </div>
+
 
     <script type="module" src="main.js"></script>
 </body>

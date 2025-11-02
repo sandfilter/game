@@ -1,8 +1,7 @@
 /**
  * ==================================================================
  * ui/modalProgress.js
- * (已修改：延迟查找模态框内部元素并在打开时绑定关闭按钮事件)
- * (Added innerHTML logging and querySelector)
+ * (已修正：移除延迟查找逻辑)
  * ==================================================================
  */
 
@@ -17,21 +16,11 @@ let isProgressCloseBtnListenerAttached = false; // Flag to prevent multiple bind
 
 /**
  * 打开副本进度弹窗
- * (Added innerHTML logging)
+ * (已修正：移除延迟查找)
  */
 export function openProgressModal() { //
-    // Log the modal's content *before* trying to find children
-    if (elements.progressModal) { //
-        console.log("Progress Modal innerHTML on open:", elements.progressModal.innerHTML); // <<< ADDED LOG
-    } else { //
-        console.error("Progress Modal container not found!"); //
-        return; // Can't proceed
-    }
-
-    // Find close button ONLY when opening the modal
-    // (Ensure we search *within* the modal container for robustness)
-    elements.progressModalCloseBtn = elements.progressModal.querySelector('#progressModalCloseBtn'); //
-    console.log("Found progressModalCloseBtn on open:", elements.progressModalCloseBtn); //
+    // (已移除) 延迟查找
+    // elements.progressModalCloseBtn = elements.progressModal.querySelector('#progressModalCloseBtn'); 
 
     // Bind listener only ONCE
     if (elements.progressModalCloseBtn && !isProgressCloseBtnListenerAttached) { //
@@ -64,30 +53,16 @@ export function closeProgressModal() { //
 
 /**
  * 刷新副本进度弹窗的内容
- * (Added querySelector as fallback search)
+ * (已修正：移除延迟查找)
  */
 export function updateProgressModal() { //
      try { //
-         // Find list elements just before updating them, search within modal
-         if (!elements.dungeon5pList && elements.progressModal) { //
-             elements.dungeon5pList = elements.progressModal.querySelector('#dungeon5pList'); //
-         }
-         if (!elements.dungeon10pList && elements.progressModal) { //
-             elements.dungeon10pList = elements.progressModal.querySelector('#dungeon10pList'); //
-         }
-         if (!elements.dungeon25pList && elements.progressModal) { //
-             elements.dungeon25pList = elements.progressModal.querySelector('#dungeon25pList'); //
-         }
-         // Fallback to global search if still not found (less ideal but helps debug)
-         if (!elements.dungeon5pList) elements.dungeon5pList = document.getElementById('dungeon5pList'); //
-         if (!elements.dungeon10pList) elements.dungeon10pList = document.getElementById('dungeon10pList'); //
-         if (!elements.dungeon25pList) elements.dungeon25pList = document.getElementById('dungeon25pList'); //
-
+         // (已移除) 延迟查找
+         // if (!elements.dungeon5pList && elements.progressModal) { ... }
+         // ...
 
          if (!elements.dungeon5pList || !elements.dungeon10pList || !elements.dungeon25pList) { //
-             console.error("Could not find dungeon list elements in updateProgressModal. Searched within modal first."); //
-             // Log content again if lists aren't found
-             if (elements.progressModal) console.log("Progress Modal innerHTML during update:", elements.progressModal.innerHTML); //
+             console.error("Could not find dungeon list elements in updateProgressModal (initElements failed?)."); //
              return; //
          }
 

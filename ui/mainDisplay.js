@@ -1,7 +1,8 @@
 /**
  * ==================================================================
  * ui/mainDisplay.js
- * (已修改：移除了 updateStatsDisplay 的 export)
+ * (已修改：从 main.js 移回 updateStatsDisplay 的完整实现)
+ * (已修改：25人本装等门槛改为 207)
  * ==================================================================
  */
 
@@ -10,10 +11,41 @@ import { gameState } from '../core/gameState.js'; //
 import { saveGame } from '../core/saveManager.js'; //
 import { addMessage } from './messageLog.js'; //
 
-// REMOVED export from here
-/*export*/ function updateStatsDisplay() { //
-   // Function body is now in main.js
-   console.warn("updateStatsDisplay in ui/mainDisplay.js should no longer be called directly."); //
+/**
+ * 更新顶部状态栏和角色面板装等/熟练度
+ * (已修改：25人本装等门槛改为 207)
+ */
+export function updateStatsDisplay() {
+    try {
+        const currentGearScore = (gameState.gearScore ?? 0).toFixed(1);
+        const currentProficiency = gameState.proficiency ?? 0;
+        const currentGold = gameState.gold ?? 0;
+
+        // 更新顶部状态栏
+        elements.displays.gearScore.textContent = currentGearScore;
+        elements.displays.gold.textContent = currentGold;
+        elements.displays.proficiency.textContent = currentProficiency;
+        elements.displays.atiyehStaffIcon.style.display = gameState.legendaryItemsObtained?.["埃提耶什·守护者的传说之杖"] ? 'flex' : 'none';
+        elements.dungeon10Btn.classList.toggle('disabled', (gameState.gearScore ?? 0) < 200);
+        elements.dungeon25Btn.classList.toggle('disabled', (gameState.gearScore ?? 0) < 207); // <<< (修改)
+
+        // 更新角色面板 (如果元素存在)
+        if (elements.charGearScoreDisplay) {
+            elements.charGearScoreDisplay.textContent = currentGearScore;
+        }
+        if (elements.charProficiencyDisplay) {
+            elements.charProficiencyDisplay.textContent = currentProficiency;
+        }
+        if (elements.charGoldDisplay) {
+            elements.charGoldDisplay.textContent = currentGold;
+        }
+
+        saveGame(); // 触发存档
+
+    } catch (error) {
+        console.error("更新状态显示时出错:", error);
+        addMessage("更新状态显示时出错。", "error");
+    }
 }
 
 /**
@@ -21,6 +53,7 @@ import { addMessage } from './messageLog.js'; //
  * (保持不变)
  */
 export function updateDungeonProgressDisplay() { //
+     // ... Function content unchanged ...
      elements.bossList.innerHTML = ''; //
      if (gameState.currentDungeon && gameState.currentDungeon.bosses) { //
         elements.dungeonProgressTitle.textContent = gameState.currentDungeon.name; //

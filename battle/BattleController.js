@@ -1,14 +1,14 @@
 /**
  * ==================================================================
  * battle/BattleController.js
- * (已修改：场景转换时间引用 TIMING_CONFIG.DUNGEON_START_DELAY)
+ * (已修改：移除了副本内部场景切换的等待界面)
+ * (已修改：移除了副本通关时的等待界面)
  * ==================================================================
  */
 
 import { GAME_CONFIG } from '../config/battle-config.js'; //
 import { AnimatedMonsterSceneGame } from './MonsterScene.js'; //
 import { AnimatedBossSceneGame } from './BossScene.js'; //
-// --- 新增：导入 TIMING_CONFIG ---
 import { TIMING_CONFIG } from '../config/timing-config.js'; //
 
 /**
@@ -84,11 +84,12 @@ export class AnimatedBattleAdventure { //
         this.battleResultEl.textContent = "正在组织人员和跑本"; //
         this.survivorsCountEl.textContent = `勇士数量: ${dungeon.size}人`; //
         this.battleTimeEl.textContent = ""; //
+        
+        // --- 副本开始前的等待界面 (保留) ---
         this.resultScreen.style.display = 'flex'; //
         
-        // --- 修改：使用 TIMING_CONFIG ---
         let countdown = TIMING_CONFIG.DUNGEON_START_DELAY / 1000; //
-        
+
         this.countdownEl.textContent = `准备进入新副本，${countdown}秒后开始`; //
         this.countdownInterval = setInterval(() => { //
             countdown--; //
@@ -116,13 +117,15 @@ export class AnimatedBattleAdventure { //
         const defaultInstruction = "勇士将自动攻击敌人，击败所有敌人进入下一场景"; //
         let instructionText = defaultInstruction; //
         let isBossScene = false; //
+        let currentBoss = null; //
 
         if (this.currentScene === 'monster') { //
             this.sceneIndicator.textContent = `${this.masterGameState.currentDungeon.name} - 小怪 ${this.animationState.currentWave} 波`; //
             this.sceneGame = new AnimatedMonsterSceneGame(this, this.animationState); //
         } else { // Boss Scene
             isBossScene = true; //
-            const currentBoss = this.masterGameState.currentDungeon.bosses[this.masterGameState.currentDungeon.bossesDefeated]; //
+            const bossIndex = Math.max(0, Math.min(this.masterGameState.currentDungeon.bossesDefeated, this.masterGameState.currentDungeon.bosses.length - 1)); //
+            currentBoss = this.masterGameState.currentDungeon.bosses[bossIndex]; //
 
             if (!currentBoss) { //
                  console.error("无法启动Boss战，找不到Boss数据！", this.masterGameState.currentDungeon); //
@@ -135,7 +138,7 @@ export class AnimatedBattleAdventure { //
             if (currentBoss.语录) { //
                 this.log(`BOSS ${currentBoss.名称}: "${currentBoss.语录}"`, 'combat'); //
             }
-            this.sceneGame = new AnimatedBossSceneGame(this, this.animationState, currentBoss); // Pass currentBoss data
+            this.sceneGame = new AnimatedBossSceneGame(this, this.animationState, currentBoss); //
         }
 
         if (this.instructionsEl) { //
@@ -145,69 +148,90 @@ export class AnimatedBattleAdventure { //
         }
     } //
 
+    /**
+     * Handle scene result
+     * (已修改：移除场景间（非通关/非失败）的等待界面)
+     * (已修改：移除副本通关时的等待界面)
+     */
     handleSceneResult(result) { //
+        // 1. 停止动画，发放奖励
         if (this.sceneGame) this.sceneGame.stopAnimation(); //
         if (this.animationFrameId) clearInterval(this.animationFrameId); //
         this.animationFrameId = null; //
 
         const rewardResult = { sceneType: this.currentScene, winner: result.winner }; //
         const defeatedBoss = (this.currentScene === 'boss' && result.winner === '勇士') //
-            ? this.masterGameState.currentDungeon.bosses[this.masterGameState.currentDungeon.bossesDefeated] //
-            : null; //
+            ? this.masterGameState.currentDungeon.bosses[this.masterGameState.currentDungeon.bossesDefeated]
+            : null;
 
         if (result.winner === '勇士') { //
             this.giveRewards(rewardResult, defeatedBoss); //
         }
 
+        // 2. 更新状态和日志
         this.animationState.lastSceneResult = result; //
         this.animationState.heroes = result.survivors; //
 
         if (result.winner !== '勇士') { //
             this.log(`场景结束: ${result.winner} 胜利!`, 'system'); //
         }
-
         this.log(`勇士存活: ${result.survivors.length}/${result.totalHeroes} | 战斗用时: ${result.battleTime.toFixed(1)}秒`, 'combat'); //
+
+        // 3. 更新结果屏幕上的文本（即使不显示，也先准备好）
         this.battleResultEl.textContent = `${result.winner}胜利!`; //
         this.survivorsCountEl.textContent = `勇士存活: ${result.survivors.length}/${result.totalHeroes}`; //
         this.battleTimeEl.textContent = `战斗用时: ${result.battleTime.toFixed(1)}秒`; //
-        this.resultScreen.style.display = 'flex'; //
-
-        if (this.currentScene === 'boss' && result.winner === '勇士') { //
-            if (this.masterGameState.currentDungeon.bossesDefeated >= this.masterGameState.currentDungeon.bosses.length) { //
-                this.log(`副本 ${this.masterGameState.currentDungeon.name} 已通关！`, 'reward'); //
-                this.countdownEl.textContent = '副本已通关！等待逻辑处理...'; //
-                if (this.instructionsEl) this.instructionsEl.style.display = 'none'; //
-                this.dungeonCompletionCallback(); //
-                return; //
+        
+        // 4. 检查游戏状态
+        if (result.winner === '勇士') {
+            // --- 成功路径 ---
+            if (this.currentScene === 'boss') { 
+                if (this.masterGameState.currentDungeon.bossesDefeated >= this.masterGameState.currentDungeon.bosses.length) {
+                    
+                    // === (修改) 副本通关 (移除等待界面，直接调用回调) ===
+                    
+                    // this.resultScreen.style.display = 'flex'; // <<< (已移除)
+                    this.log(`副本 ${this.masterGameState.currentDungeon.name} 已通关！`, 'reward'); 
+                    // this.countdownEl.textContent = '副本已通关！等待逻辑处理...'; // <<< (已移除)
+                    if (this.instructionsEl) this.instructionsEl.style.display = 'none'; //
+                    
+                    this.dungeonCompletionCallback(); // (立即调用)
+                    return; // 停止
+                }
             }
+
+            // === 场景切换 (移除等待界面) ===
+            // (小怪 -> BOSS, 或 BOSS 1 -> 小怪)
+            console.log("场景切换，立即开始下一场。");
+            const nextScene = this.currentScene === 'monster' ? 'boss' : 'monster'; //
+            this.currentScene = nextScene; //
+            if (nextScene === 'monster') this.animationState.currentWave++; //
+            
+            // (修改：不再设置倒计时，而是立即开始)
+            this.startCurrentScene(); //
+            return; 
+
+        } else {
+            // --- 失败路径 (保留等待界面) ---
+            this.resultScreen.style.display = 'flex'; // <<< 显示等待界面
+            this.log(`团灭了！正在重新跑本再战...`, 'error'); //
+            if (this.instructionsEl) this.instructionsEl.style.display = 'none'; //
+
+            let countdown = TIMING_CONFIG.DUNGEON_START_DELAY / 1000; //
+            this.countdownEl.textContent = `团灭了！${countdown}秒后重新挑战...`; //
+            this.animationState.heroes = []; //
+
+            this.countdownInterval = setInterval(() => { //
+                countdown--; //
+                this.countdownEl.textContent = `团灭了！${countdown}秒后重新挑战...`; //
+                if (countdown <= 0) { //
+                    clearInterval(this.countdownInterval); //
+                    this.countdownInterval = null; //
+                    console.log(`Retrying scene: ${this.currentScene}`); //
+                    this.startCurrentScene(); //
+                }
+            }, 1000); //
         }
-
-        if (result.winner !== '勇士') { //
-            this.log(`战斗失败！正在等待新的指令...`, 'error'); //
-            this.countdownEl.textContent = '战斗失败！'; //
-             if (this.instructionsEl) this.instructionsEl.style.display = 'none'; //
-            return; //
-        }
-
-        const nextScene = this.currentScene === 'monster' ? 'boss' : 'monster'; //
-        const nextSceneText = nextScene === 'monster' ? '小怪场景' : 'BOSS场景'; //
-        
-        // --- 修改：使用 TIMING_CONFIG ---
-        let countdown = TIMING_CONFIG.DUNGEON_START_DELAY / 1000; //
-        
-        this.countdownEl.textContent = `勇士正在恢复和跑图中，${countdown}秒后进入${nextSceneText}`; //
-
-        this.countdownInterval = setInterval(() => { //
-            countdown--; //
-            this.countdownEl.textContent = `勇士正在恢复和跑图中，${countdown}秒后进入${nextSceneText}`; //
-            if (countdown <= 0) { //
-                clearInterval(this.countdownInterval); //
-                this.countdownInterval = null; //
-                this.currentScene = nextScene; //
-                if (nextScene === 'monster') this.animationState.currentWave++; //
-                this.startCurrentScene(); //
-            } //
-        }, 1000); //
     } //
 
     setAnimationFrameId(id) { //

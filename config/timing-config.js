@@ -11,6 +11,6 @@
 // --- 现有项目的时序配置 ---
 //
 export const TIMING_CONFIG = {
-    DUNGEON_START_DELAY: 200,      // 开始新副本前的延迟（毫秒）
-    MODAL_REFRESH_INTERVAL: 200,   // 进度弹窗的刷新间隔（毫秒）
+    DUNGEON_START_DELAY: 2000,      // 开始新副本前的延迟（毫秒）
+    MODAL_REFRESH_INTERVAL: 2000,   // 进度弹窗的刷新间隔（毫秒）
 };
