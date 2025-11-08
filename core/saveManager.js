@@ -2,6 +2,9 @@
  * ==================================================================
  * core/saveManager.js
  * (已修改：添加 equipment 和 collectibles 到存档/读档/导入/导出)
+ * (已修改：添加 proficiencyPurchased)
+ * (已修改：添加飞升状态 (ascensionLevel, heirloomLevels) 的存读)
+ * (已修正：移除读档时的重复飞升加成，修复初始熟练度翻倍BUG)
  * ==================================================================
  */
 
@@ -10,7 +13,7 @@ import { gameState, defaultGameState } from './gameState.js'; //
 
 /**
  * 存档
- * (已修改：添加 equipment, collectibles)
+ * (已修改：添加 equipment, collectibles, proficiencyPurchased, ascension)
  */
 export function saveGame() { //
     try { //
@@ -27,14 +30,20 @@ export function saveGame() { //
 
         const savableGameState = { //
             proficiency: gameState.proficiency, //
+            proficiencyPurchased: gameState.proficiencyPurchased, // 
             gearScore: gameState.gearScore, //
             gold: gameState.gold, //
-            equipment: { ...gameState.equipment }, // <<< (新增)
+            equipment: { ...gameState.equipment }, // 
             badges: { ...gameState.badges }, //
             legendaryShards: { ...gameState.legendaryShards }, //
             legendaryItemsObtained: { ...gameState.legendaryItemsObtained }, //
-            collectibles: [ ...gameState.collectibles ], // <<< (新增)
+            collectibles: [ ...gameState.collectibles ], // 
             milestoneQuestsClaimed: { ...gameState.milestoneQuestsClaimed }, //
+            
+            // (新增) 飞升状态
+            ascensionLevel: gameState.ascensionLevel,
+            heirloomLevels: { ...gameState.heirloomLevels },
+
             monstersKilled: gameState.monstersKilled, //
             bossesKilled: gameState.bossesKilled, //
             currentDungeon: minimalCurrentDungeon, //
@@ -52,10 +61,11 @@ export function saveGame() { //
 
 /**
  * 读档
- * (已修改：添加 equipment, collectibles)
+ * (已修改：添加 equipment, collectibles, proficiencyPurchased, ascension)
+ * (已修正：移除重复的飞升加成)
  */
 export function loadGame() { //
-    console.log("--- loadGame started ---"); //
+    // console.log("--- loadGame started ---"); //
     let loadedState = null; //
     let loadMessage = { loaded: false, message: '', type: 'system' }; //
     let savedDataRaw = null; //
@@ -63,13 +73,13 @@ export function loadGame() { //
     // 1. 尝试加载存档
     try { //
         savedDataRaw = localStorage.getItem('wowAfkGameSave'); //
-        console.log("Raw saved data from localStorage:", savedDataRaw); //
+        // console.log("Raw saved data from localStorage:", savedDataRaw); //
         if (savedDataRaw) { //
             loadedState = JSON.parse(savedDataRaw); //
-            console.log("Parsed loadedState:", loadedState); //
+            // console.log("Parsed loadedState:", loadedState); //
             loadMessage = { loaded: true, message: '游戏进度已加载。', type: 'system' }; //
         } else { //
-             console.log("No saved data found in localStorage."); //
+             // console.log("No saved data found in localStorage."); //
         }
     } catch (e) { //
         console.error("解析存档数据时出错:", e); //
@@ -81,22 +91,28 @@ export function loadGame() { //
     // 2. 根据是否有存档进行初始化
     if (loadedState) {
         // --- 有存档：合并存档数据到默认结构上 ---
-        console.log("Branch: Loading saved game."); //
+        // console.log("Branch: Loading saved game."); //
         Object.assign(gameState, JSON.parse(JSON.stringify(defaultGameState))); //
         
-        gameState.proficiency = loadedState.proficiency ?? defaultGameState.proficiency; //
+        // (修正) 直接读取存档中的 proficiency，不再额外附加信物加成
+        gameState.proficiency = loadedState.proficiency ?? defaultGameState.proficiency; 
+        
+        gameState.proficiencyPurchased = loadedState.proficiencyPurchased ?? defaultGameState.proficiencyPurchased; // 
         gameState.gearScore = loadedState.gearScore ?? defaultGameState.gearScore; //
         gameState.gold = loadedState.gold ?? defaultGameState.gold; //
         gameState.monstersKilled = loadedState.monstersKilled ?? defaultGameState.monstersKilled; //
         gameState.bossesKilled = loadedState.bossesKilled ?? defaultGameState.bossesKilled; //
 
+        // (新增) 飞升状态
+        gameState.ascensionLevel = loadedState.ascensionLevel ?? defaultGameState.ascensionLevel;
+        gameState.heirloomLevels = { ...defaultGameState.heirloomLevels, ...(loadedState.heirloomLevels || {}) };
+
         // 合并嵌套对象
-        gameState.equipment = { ...defaultGameState.equipment, ...(loadedState.equipment || {}) }; // <<< (新增)
+        gameState.equipment = { ...defaultGameState.equipment, ...(loadedState.equipment || {}) }; // 
         gameState.badges = { ...defaultGameState.badges, ...(loadedState.badges || {}) }; //
         gameState.legendaryShards = { ...defaultGameState.legendaryShards, ...(loadedState.legendaryShards || {}) }; //
         gameState.legendaryItemsObtained = { ...defaultGameState.legendaryItemsObtained, ...(loadedState.legendaryItemsObtained || {}) }; //
-        // (修改) 确保 collectibles 是数组
-        gameState.collectibles = Array.isArray(loadedState.collectibles) ? loadedState.collectibles : []; // <<< (新增)
+        gameState.collectibles = Array.isArray(loadedState.collectibles) ? loadedState.collectibles : []; // 
         gameState.milestoneQuestsClaimed = { ...defaultGameState.milestoneQuestsClaimed, ...(loadedState.milestoneQuestsClaimed || {}) }; //
         
         gameState.currentDungeon = loadedState.currentDungeon || null; //
@@ -115,20 +131,19 @@ export function loadGame() { //
              }
          }
          
-         // (新增) 移除已不存在的圣物槽
          if (gameState.equipment.relic) {
              console.warn("从存档中移除已弃用的 'relic' 槽。");
              delete gameState.equipment.relic;
          }
 
-        console.log("gameState after merging save:", JSON.parse(JSON.stringify(gameState))); //
+        // console.log("gameState after merging save:", JSON.parse(JSON.stringify(gameState))); //
 
     } else {
         // --- 无存档 (或已损坏)：直接从 defaultGameState 初始化新游戏 ---
-        console.log("Branch: Initializing new game from defaultGameState."); //
+        // console.log("Branch: Initializing new game from defaultGameState."); //
         try { //
             Object.assign(gameState, JSON.parse(JSON.stringify(defaultGameState))); //
-            console.log("gameState after copying defaultGameState:", JSON.parse(JSON.stringify(gameState))); //
+            // console.log("gameState after copying defaultGameState:", JSON.parse(JSON.stringify(gameState))); //
             gameState.dungeons5p = []; //
             gameState.raids10p = []; //
             gameState.raids25p = []; //
@@ -145,19 +160,22 @@ export function loadGame() { //
 
     // --- 通用安全检查 ---
     gameState.proficiency = Math.max(0, Number(gameState.proficiency) || 0); //
+    gameState.proficiencyPurchased = Math.max(0, Number(gameState.proficiencyPurchased) || 0); // 
     gameState.gearScore = Math.max(1, Number(gameState.gearScore) || 187); //
     gameState.gold = Math.max(0, Number(gameState.gold) || 0); //
     gameState.monstersKilled = Math.max(0, Number(gameState.monstersKilled) || 0); //
     gameState.bossesKilled = Math.max(0, Number(gameState.bossesKilled) || 0); //
-    gameState.equipment = gameState.equipment || {}; // (新增)
+    gameState.equipment = gameState.equipment || {}; // 
     gameState.badges = gameState.badges || {}; //
     gameState.legendaryShards = gameState.legendaryShards || {}; //
     gameState.legendaryItemsObtained = gameState.legendaryItemsObtained || {}; //
-    gameState.collectibles = gameState.collectibles || []; // (新增)
+    gameState.collectibles = gameState.collectibles || []; // 
     gameState.milestoneQuestsClaimed = gameState.milestoneQuestsClaimed || {}; //
+    gameState.ascensionLevel = Math.max(0, Number(gameState.ascensionLevel) || 0);
+    gameState.heirloomLevels = gameState.heirloomLevels || {};
 
-    console.log("Final gameState before returning from loadGame:", JSON.parse(JSON.stringify(gameState))); //
-    console.log("--- loadGame finished ---"); //
+    // console.log("Final gameState before returning from loadGame:", JSON.parse(JSON.stringify(gameState))); //
+    // console.log("--- loadGame finished ---"); //
     return { loadMessage, loadedState }; //
 }
 
@@ -201,20 +219,25 @@ export function confirmAndClearSave() { //
 
 /**
  * 导出存档
- * (已修改：添加 equipment, collectibles)
+ * (已修改：添加 equipment, collectibles, proficiencyPurchased, ascension)
  */
  export function exportSave() { //
      try { //
          const stateToSave = { //
              proficiency: gameState.proficiency, //
+             proficiencyPurchased: gameState.proficiencyPurchased, // 
              gearScore: gameState.gearScore, //
              gold: gameState.gold, //
-             equipment: { ...gameState.equipment }, // <<< (新增)
+             equipment: { ...gameState.equipment }, // 
              badges: { ...gameState.badges }, //
              legendaryShards: { ...gameState.legendaryShards }, //
              legendaryItemsObtained: { ...gameState.legendaryItemsObtained }, //
-             collectibles: [ ...gameState.collectibles ], // <<< (新增)
+             collectibles: [ ...gameState.collectibles ], // 
              milestoneQuestsClaimed: { ...gameState.milestoneQuestsClaimed }, //
+             
+             ascensionLevel: gameState.ascensionLevel,
+             heirloomLevels: { ...gameState.heirloomLevels },
+
              monstersKilled: gameState.monstersKilled, //
              bossesKilled: gameState.bossesKilled, //
              dungeons5p: gameState.dungeons5p.map(d => ({ name: d.name, completed: d.completed })), //

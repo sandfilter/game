@@ -3,6 +3,7 @@
  * battle/BattleController.js
  * (已修改：移除了副本内部场景切换的等待界面)
  * (已修改：移除了副本通关时的等待界面)
+ * (已修改：移除控制台日志)
  * ==================================================================
  */
 
@@ -202,7 +203,7 @@ export class AnimatedBattleAdventure { //
 
             // === 场景切换 (移除等待界面) ===
             // (小怪 -> BOSS, 或 BOSS 1 -> 小怪)
-            console.log("场景切换，立即开始下一场。");
+            // console.log("场景切换，立即开始下一场。"); // <<< (已注释)
             const nextScene = this.currentScene === 'monster' ? 'boss' : 'monster'; //
             this.currentScene = nextScene; //
             if (nextScene === 'monster') this.animationState.currentWave++; //

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>挂鸡污喵王内测版0.2</title>
+    <title>挂鸡污喵王内测版0.3</title>
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
@@ -16,7 +16,9 @@
                 <div class="status-item"><span class="status-icon">🔪</span><span>熟练度: <span id="proficiencyDisplay">...</span></span></div>
                 <div class="status-item"><span class="status-icon">⭐</span><span>装备等级: <span id="gearScoreDisplay">...</span></span></div>
                 <div class="status-item"><span class="status-icon">💰</span><span>金币: <span id="goldDisplay">...</span></span></div>
-                <div class="status-item" id="atiyehStaffIcon" style="display: none;"><span class="status-icon">🍗</span><span class="legendary">埃提耶什·守护者的传说之杖</span></div>
+                
+                <div id="specialItemsContainer" class="status-group" style="margin-left: 10px;"></div> 
+
             </div>
              <div class="save-button-group">
                 <button id="settingsBtn" class="wow-button">设置</button>
@@ -27,7 +29,7 @@
             <div class="main-column">
                 <div class="animation-area" id="animationArea">
                     <div class="scene-indicator" id="sceneIndicator">选择地下城开始</div>
-                    <canvas id="gameCanvas" width="900" height="600"></canvas>
+                    <canvas id="gameCanvas" width="800" height="400"></canvas>
                     <div class="instructions">勇士将自动攻击敌人，击败所有敌人进入下一场景</div>
                     <div id="resultScreen">
                         <div class="result-text" id="battleResult"></div>
@@ -35,6 +37,7 @@
                         <div class="stats-text" id="battleTime"></div>
                         <div class="countdown-text" id="countdown"></div>
                     </div>
+                    <button id="bossClickBtn" class="wow-button" style="display: none;">🔥攻击BOSS!</button>
                 </div>
                 <div class="message-section">
                     <div class="message-header"><span>📜 消息日志</span></div>
@@ -68,7 +71,7 @@
         </div>
 
         <div class="footer-info">
-            测试版当前游戏目标为：获取埃提耶什·守护者的传说之杖。参与改进本游戏请加挂鸡污喵王QQ群63825952
+            参与改进本游戏请加挂鸡污喵王QQ群63825952
         </div>
     </div>
 
@@ -117,6 +120,7 @@
                 <button id="exportSaveBtn" class="wow-button">导出存档</button>
                 <button id="gameHelpBtn" class="wow-button">游戏说明</button>
                 <button id="clearSaveBtn" class="wow-button">清除存档</button>
+                <button id="ascendBtn" class="wow-button" style="display: none;">飞升重置</button>
             </div>
         </div>
     </div>
@@ -133,8 +137,8 @@
                 <h3>游戏目标：</h3>
                 <ul>
                     <li>通过挑战 5/10/25 人副本提升你的装备等级。</li>
-                    <li>在 25 人副本“纳克萨玛斯”中收集“埃提耶什的碎片”。</li>
-                    <li>完成任务，铸造传说武器：埃提耶什·守护者的传说之杖！</li>
+                    <li>在 25 人副本“奥杜尔”中收集“瓦兰奈尔的碎片”。</li>
+                    <li>完成任务，铸造传说武器：瓦兰奈尔·远古王者之锤！</li>
                 </ul>
                 <br>
                 <h3>提示：</h3>
@@ -143,6 +147,7 @@
                     <li>每当完成所有5人地下城，所有地下城的进度将重置。</li>
                     <li>熟练度可略微增加勇士们攻击速度和移动速度；装备等级可增加勇士们的攻击力和血量。</li>
                     <li>增加25人永恒之眼低掉率收藏品[碧蓝幼龙的缰绳]，25人黑曜石圣殿低掉率收藏品[暮光幼龙的缰绳]。</li>
+                    <li>增加25人奥杜尔低掉率收藏品[米米尔隆的头部]。</li>
                 </ul>
             </div>
         </div>
@@ -155,7 +160,6 @@
                 <button class="modal-close" id="characterModalCloseBtn">&times;</button>
             </div>
             <div class="modal-body character-detailed-layout">
-                
                 <div class="character-equipment">
                     <div class="equipment-grid-wow">
                         <div class="equip-slot slot-head" data-slot="head"><span>👑</span><br>头部</div>
@@ -178,19 +182,16 @@
                         <div class="equip-slot slot-offhand" data-slot="offhand"><span>🛡️</span><br>副手</div>
                         </div>
                 </div>
-
                 <div class="character-stats-detailed">
                     <div class="char-name-level">
                         <span class="char-name">挂机英雄</span>
                     </div>
-
                     <div class="stats-section">
                         <h3>基本属性</h3>
                         <p>熟练度: <span id="charProficiencyDisplay">...</span></p>
                         <p>装备等级: <span id="charGearScoreDisplay">...</span></p>
                         <p>金币: <span id="charGoldDisplay">...</span></p>
                     </div>
-
                      <div class="stats-section">
                         <h3>徽章</h3>
                         <p>💎 深渊水晶: <span id="charAbyssCrystalDisplay">--</span></p>
@@ -200,7 +201,6 @@
                         <p>🏅 凯旋徽章: <span id="charTriumphDisplay">--</span></p>
                         <p>❄️ 寒冰徽章: <span id="charFrostDisplay">--</span></p>
                     </div>
-
                      <div class="stats-section">
                         <h3>传说碎片</h3>
                         <p>🔸 埃提耶什: <span id="charAtiyehsuideDisplay">--</span></p>
@@ -232,6 +232,7 @@
         <div class="tooltip-slot">头部</div>
     </div>
 
+    <div id="reminderContainer" class="reminder-container"></div>
 
     <script type="module" src="main.js"></script>
 </body>

@@ -5,6 +5,7 @@
  * (已修改：移除了 FINAL_GEAR_CAP 逻辑)
  * (已修改：25人本装等门槛改为 207)
  * (已修改：移除通关后的延迟以实现无缝切换)
+ * (已修改：添加 startNextAvailableDungeon 优先级排队函数)
  * ==================================================================
  */
 
@@ -31,6 +32,7 @@ export function setBattleGameInstance(instance) {
  * (新增) 处理副本完成后的游戏流程
  * (已修改：移除 FINAL_GEAR_CAP 奖励逻辑)
  * (已修改：移除 setTimeout 延迟)
+ * (已修改：调用 startNextAvailableDungeon 以实现优先级排队)
  */
 export function handleDungeonCompletionFlow(completedDungeonRef) {
     // 1. (已移除) 满级金币奖励逻辑 (FINAL_GEAR_CAP 已移除)
@@ -47,7 +49,6 @@ export function handleDungeonCompletionFlow(completedDungeonRef) {
     updateDungeonProgressDisplay(); 
 
     // 3. 决定下一步行动
-    let nextDungeonSize = lastDungeonSize; 
     let requiresResetAndRestart = false; 
     if (lastDungeonSize === 5) { 
         if (gameState.dungeons5p.every(d => d.completed)) { 
@@ -56,30 +57,75 @@ export function handleDungeonCompletionFlow(completedDungeonRef) {
         }
     } else if (lastDungeonSize === 10) { 
         if (gameState.raids10p.every(d => d.completed)) { 
-            addMessage("已完成所有10人团队副本！将自动开始5人地下城。", "system"); 
-            nextDungeonSize = 5; 
+            addMessage("已完成所有10人团队副本！将自动搜索下一个可用副本。", "system"); 
+            // (不再需要 nextDungeonSize = 5)
         }
     } else if (lastDungeonSize === 25) { 
          if (gameState.raids25p.every(d => d.completed)) { 
-            addMessage("已完成所有25人团队副本！将自动开始5人地下城。", "system"); 
-            nextDungeonSize = 5; 
+            addMessage("已完成所有25人团队副本！将自动搜索下一个可用副本。", "system"); 
+            // (不再需要 nextDungeonSize = 5)
         }
     }
 
     // 4. (修改) 执行下一步 (移除 setTimeout)
     if (requiresResetAndRestart) { 
          resetAllDungeonProgress(); 
-         addMessage(`正在自动匹配下一个5人副本...`, 'system'); 
-         startNewDungeon(5); // (修改：移除延迟)
+         // (消息已移至 startNextAvailableDungeon 内部)
+         startNextAvailableDungeon(); // (修改：移除延迟)
     } else { 
-         addMessage(`正在自动匹配下一个${nextDungeonSize}人副本...`, 'system'); 
-         startNewDungeon(nextDungeonSize); // (修改：移除延迟)
+         // (消息已移至 startNextAvailableDungeon 内部)
+         startNextAvailableDungeon(); // (修改：移除延迟)
     }
 }
 
 
 /**
- * 开始一个新的随机副本
+ * (新增) 自动按 25 -> 10 -> 5 的优先级开始一个新副本
+ */
+export function startNextAvailableDungeon() {
+    const gearScore = gameState.gearScore ?? 0;
+    
+    // (门槛值来自 startNewDungeon 函数)
+    const req25 = 207; 
+    const req10 = 200;
+
+    // 1. 检查 25 人
+    if (gearScore >= req25) {
+        const uncompleted25 = gameState.raids25p.filter(d => d && !d.completed);
+        if (uncompleted25.length > 0) {
+            addMessage(`正在自动匹配下一个25人副本...`, 'system');
+            startNewDungeon(25); // 使用现有的随机选择器
+            return;
+        }
+        // (如果25人全打完了，自动降级到10人)
+    }
+
+    // 2. 检查 10 人
+    if (gearScore >= req10) {
+        const uncompleted10 = gameState.raids10p.filter(d => d && !d.completed);
+        if (uncompleted10.length > 0) {
+            addMessage(`正在自动匹配下一个10人副本...`, 'system');
+            startNewDungeon(10);
+            return;
+        }
+        // (如果10人全打完了，自动降级到5人)
+    }
+
+    // 3. 降级到 5 人 (或 5 人本重置后)
+    const uncompleted5 = gameState.dungeons5p.filter(d => d && !d.completed);
+    if (uncompleted5.length > 0) {
+        addMessage(`正在自动匹配下一个5人副本...`, 'system');
+        startNewDungeon(5);
+        return;
+    }
+
+    // (此情况不应发生，因为 5 人本完成后会重置)
+    addMessage(`所有副本均已完成，等待5人副本重置...`, 'system');
+}
+
+
+/**
+ * 开始一个新的随机副本 (此函数现在主要由 startNextAvailableDungeon 或 UI 按钮调用)
  * (已修改：25人本装等门槛改为 207)
  */
 export function startNewDungeon(size) {
@@ -110,7 +156,8 @@ export function startNewDungeon(size) {
                  addMessage(`等待副本重置...`, 'system'); //
              } else { //
                  addMessage(`将自动开始5人地下城。`, 'system'); //
-                 setTimeout(() => startNewDungeon(5), TIMING_CONFIG.DUNGEON_START_DELAY); // (这里的延迟是故意的，因为5人本重置了)
+                 // (修改：不再自动开始5人，而是调用优先级排队)
+                 setTimeout(() => startNextAvailableDungeon(), TIMING_CONFIG.DUNGEON_START_DELAY);
              }
         } else { //
             addMessage(`没有可用的${dungeonType}。`, 'error'); //

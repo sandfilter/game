@@ -3,6 +3,7 @@
  * ui/modalSettings.js (新文件)
  * 职责: 管理设置弹窗和帮助弹窗的事件监听器。
  * (已修正：依赖 initElements 查找元素)
+ * (已修改：添加飞升按钮逻辑，支持多种传说武器解锁)
  * ==================================================================
  */
 
@@ -13,17 +14,31 @@ import {
     exportSave, 
     importSave 
 } from '../core/saveManager.js';
+import { gameState } from '../core/gameState.js'; // 
 
 /**
  * 初始化所有与设置/帮助弹窗相关的事件监听器
  * (此函数应在 main.js 的 bindEventListeners 中被调用)
+ * (已修改：接受 ascensionCallback)
  */
-export function initSettingsModalListeners() {
+export function initSettingsModalListeners(ascensionCallback) {
     
     // 1. 打开设置弹窗
     if (elements.settingsBtn) {
         elements.settingsBtn.addEventListener('click', () => {
             console.log("Settings button clicked!");
+            
+            // --- (修改) 飞升按钮可见性检查 ---
+            // 只要拥有任意一把传说武器，就可以飞升
+            const hasLegendary = 
+                gameState.legendaryItemsObtained["埃提耶什·守护者的传说之杖"] ||
+                gameState.legendaryItemsObtained["瓦兰奈尔·远古王者之锤"];
+
+            if (elements.ascendBtn) {
+                elements.ascendBtn.style.display = hasLegendary ? 'block' : 'none';
+            }
+            // --- 检查结束 ---
+
             elements.settingsModal.style.display = 'flex';
         });
     } else {
@@ -87,5 +102,16 @@ export function initSettingsModalListeners() {
         });
     } else {
         console.error("helpModalCloseBtn is null");
+    }
+    
+    // 8. 飞升按钮
+    if (elements.ascendBtn) {
+        elements.ascendBtn.addEventListener('click', () => {
+            if (ascensionCallback) {
+                ascensionCallback();
+            }
+        });
+    } else {
+        console.error("ascendBtn is null");
     }
 }

@@ -3,6 +3,9 @@
  * ui/domElements.js
  * (已修改：添加收藏品弹窗元素)
  * (已修正：initElements 现在会查找所有元素，修复 'null' 错误)
+ * (已修改：添加 reminderContainer)
+ * (已修改：添加 ascendBtn)
+ * (已修改：替换 atiyehStaffIcon 为 specialItemsContainer)
  * ==================================================================
  */
 
@@ -53,6 +56,13 @@ export const elements = {
     clearSaveBtn: null,
     exportSaveBtn: null,
     importSaveBtn: null,
+    ascendBtn: null,
+
+    // --- (新增) 提醒容器 ---
+    reminderContainer: null,
+
+    // --- (新增) 特殊物品状态栏容器 ---
+    specialItemsContainer: null, 
 };
 
 export function initElements() {
@@ -72,7 +82,10 @@ export function initElements() {
     elements.displays.gearScore = document.getElementById('gearScoreDisplay');
     elements.displays.gold = document.getElementById('goldDisplay');
     elements.displays.proficiency = document.getElementById('proficiencyDisplay');
-    elements.displays.atiyehStaffIcon = document.getElementById('atiyehStaffIcon');
+    
+    // (修改) 移除了 atiyehStaffIcon，添加了 specialItemsContainer
+    elements.specialItemsContainer = document.getElementById('specialItemsContainer');
+
     elements.dungeonProgressTitle = document.getElementById('dungeonProgressTitle');
     elements.bossList = document.getElementById('bossList');
     elements.characterBtn = document.getElementById('characterBtn');
@@ -80,9 +93,11 @@ export function initElements() {
     elements.collectiblesBtn = document.getElementById('collectiblesBtn');
     elements.collectiblesModal = document.getElementById('collectiblesModal');
     elements.itemTooltip = document.getElementById('itemTooltip');
+    
+    // (新增) 提醒容器
+    elements.reminderContainer = document.getElementById('reminderContainer');
 
     // --- (修正) 查找所有弹窗内部的元素 ---
-    // (这些元素在 DOMContentLoaded 时 100% 存在于正确的 HTML 中)
     
     // 设置/帮助 弹窗
     elements.settingsBtn = document.getElementById('settingsBtn');
@@ -94,6 +109,7 @@ export function initElements() {
     elements.clearSaveBtn = document.getElementById('clearSaveBtn');
     elements.exportSaveBtn = document.getElementById('exportSaveBtn');
     elements.importSaveBtn = document.getElementById('importSaveBtn');
+    elements.ascendBtn = document.getElementById('ascendBtn'); 
 
     // 收藏品 弹窗 (内部)
     elements.collectiblesModalCloseBtn = document.getElementById('collectiblesModalCloseBtn'); 

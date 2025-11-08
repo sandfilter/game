@@ -4,6 +4,9 @@
  * (已修改：将 gameLoop 从 setInterval 切换回 requestAnimationFrame)
  * (已修改：实现动态战斗速度和勇士属性)
  * (已修正：战斗速度公式)
+ * (已修改：更新怪物HP计算公式)
+ * (已修改：移除控制台日志)
+ * (已修改：熟练度加速机制改为递减公式)
  * ==================================================================
  */
 
@@ -33,7 +36,7 @@ export class AnimatedMonsterSceneGame { //
      * 修改：使用 requestAnimationFrame
      */
     startAnimation() { //
-        console.log("MonsterScene: Starting rAF loop.");
+        // console.log("MonsterScene: Starting rAF loop."); // <<< (已注释)
         this.lastFrameTime = performance.now(); // 重置计时器
         this.animationFrameId = requestAnimationFrame(this.gameLoop); //
         this.adventureGame.setAnimationFrameId(this.animationFrameId); //
@@ -45,7 +48,7 @@ export class AnimatedMonsterSceneGame { //
     stopAnimation() { //
         if (this.animationFrameId) { //
             cancelAnimationFrame(this.animationFrameId); //
-            console.log("MonsterScene: Stopped rAF loop.");
+            // console.log("MonsterScene: Stopped rAF loop."); // <<< (已注释)
         }
         this.animationFrameId = null; //
     } //
@@ -112,24 +115,30 @@ export class AnimatedMonsterSceneGame { //
         } 
     } 
 
-    createMonsters() { /* ... (保持不变) ... */ } //
-    // (Implementation omitted)
+    /**
+     * (已修改) 更新怪物HP计算公式
+     */
     createMonsters() { 
         this.monsters = []; 
         const positions = [[-200, 0], [-100, -100], [0, -100], [100, 0], [200, 100], [300, 100], [400, 0]]; 
         const offsetX = this.canvas.width / 2 - 100; 
         const offsetY = this.canvas.height / 2; 
+        
         const heroCount = this.animationState.heroCount;
-        let hpMultiplier = 1.0; 
-        if (heroCount === 10) {
-            hpMultiplier = 1.5;
-        } else if (heroCount === 25) {
-            hpMultiplier = 3.0;
-        }
+        
+        // --- (修改) HP计算 ---
+        // 将 GAME_CONFIG 中的血量视为 5 人本的基础血量
+        // (5/5 = 1.0x, 10/5 = 2.0x, 25/5 = 5.0x)
+        const hpMultiplier = heroCount / 5; 
+        // --- 修改结束 ---
+
         positions.map(([dx, dy]) => [offsetX + dx, offsetY + dy]).forEach(([x, y], index) => { 
             const isElite = GAME_CONFIG.monsterScene.eliteIndices.includes(index); 
             const baseHp = isElite ? GAME_CONFIG.monsterScene.eliteMaxHp : GAME_CONFIG.monsterScene.monsterMaxHp;
+            
+            // (修改) 应用新的 HP 乘数
             const finalHp = Math.floor(baseHp * hpMultiplier); 
+            
             this.monsters.push({ 
                 isElite, 
                 x, y, 
@@ -144,7 +153,7 @@ export class AnimatedMonsterSceneGame { //
     } 
     
     /**
-     * (已修正：使用 8.0 + ... 公式)
+     * (已修改：应用新的熟练度公式)
      */
     gameLoop(timestamp) { //
         // --- 修改：rAF DeltaTime 计算 ---
@@ -155,9 +164,13 @@ export class AnimatedMonsterSceneGame { //
             deltaTime = 1; // Cap delta time
         }
 
-        // --- (修正) 应用动态战斗速度倍率 ---
+        // --- (修改) 应用动态战斗速度倍率（新公式） ---
         const proficiency = this.adventureGame.masterGameState?.proficiency ?? 0;
-        const dynamicSpeedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + (proficiency / 1000); // <<< (修正)
+        
+        // 新公式: ProficiencyBonus = (3 * proficiency) / (4000 + proficiency)
+        const proficiencyBonus = (3 * proficiency) / (4000 + proficiency);
+        const dynamicSpeedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + proficiencyBonus; // 基础速度 + 加成速度
+        
         deltaTime *= dynamicSpeedMultiplier;
         // --- 速度修改结束 ---
 
@@ -170,7 +183,7 @@ export class AnimatedMonsterSceneGame { //
     } //
     
     /**
-     * (已修正：使用 8.0 + ... 公式)
+     * (已修改：应用新的熟练度公式)
      */
     update(deltaTime) { 
         if (!this.battleStarted) { 
@@ -209,9 +222,12 @@ export class AnimatedMonsterSceneGame { //
             }); 
         } 
         
-        // (修正) 动态计算速度
+        // (修改) 动态计算速度
         const proficiency = this.adventureGame.masterGameState?.proficiency ?? 0;
-        const speedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + (proficiency / 1000); // <<< (修正)
+        
+        // 新公式: ProficiencyBonus = (3 * proficiency) / (4000 + proficiency)
+        const proficiencyBonus = (3 * proficiency) / (4000 + proficiency);
+        const speedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + proficiencyBonus; // <<< (修改)
 
         if (currentTarget && currentTarget.hp > 0 && currentTime - this.lastMonsterAttackTime > (GAME_CONFIG.monsterScene.monsterAttackInterval / speedMultiplier)) { 
             this.lastMonsterAttackTime = currentTime; 

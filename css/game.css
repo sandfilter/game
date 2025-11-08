@@ -21,6 +21,31 @@
     object-fit: contain;
 }
 
+/* (新增) BOSS战攻击按钮 */
+#bossClickBtn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 20;
+    padding: 12px 20px;
+    font-size: 16px;
+    background: linear-gradient(to bottom, #d12c0c, #a0200a);
+    border-color: #ff4400;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    animation: pulseBtn 1.5s infinite alternate;
+}
+#bossClickBtn:hover {
+    background: linear-gradient(to bottom, #e6391a, #b82914);
+    transform: scale(1.05);
+}
+#bossClickBtn:active {
+    transform: scale(0.95);
+}
+@keyframes pulseBtn {
+    from { box-shadow: 0 0 5px rgba(255, 68, 0, 0.3); }
+    to { box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); }
+}
+
 .instructions {
     position: absolute;
     bottom: 8px; /* */
@@ -339,6 +364,7 @@
     padding: 10px; /* */
     width: max-content; /* 宽度自适应内容 */ /* */
     min-width: 150px; /* */
+    max-width: 300px; /* (新增) 限制最大宽度，防止描述过长 */
     color: #fff; /* */
     font-size: 13px; /* */
     line-height: 1.5; /* */
@@ -357,14 +383,6 @@
     color: #999; /* 灰色显示槽位 */ /* */
     margin-top: 5px; /* */
 }
-
-/* --- 稀有度文字颜色 (用于 Tooltip) --- */
-.rarity-common { color: #ffffff; } /* */
-.rarity-uncommon { color: #1eff00; } /* */
-.rarity-rare { color: #0070dd; } /* */
-.rarity-epic { color: #a335ee; } /* */
-.rarity-legendary { color: #ff8000; } /* */
-
 
 /* --- (新增) 收藏品弹窗 (内容) --- */
 .collectibles-list {
@@ -396,4 +414,29 @@
 }
 .collectible-item.rarity-legendary .collectible-name {
     color: #ff8000; /* 橙色 */
+}
+
+.reminder-close {
+    font-size: 22px;
+    color: #88dd88; /* 绿色对号 */
+    cursor: pointer;
+    margin-left: 10px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.reminder-close:hover {
+    background-color: rgba(136, 221, 136, 0.2);
+}
+
+/* (新增) Tooltip 描述样式 */
+.tooltip-description {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ffd700; /* 金色描述 */
+    font-style: italic;
+    line-height: 1.4;
+    border-top: 1px solid #444;
+    padding-top: 5px;
 }

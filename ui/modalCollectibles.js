@@ -3,17 +3,28 @@
  * ui/modalCollectibles.js (新文件)
  * 职责: 管理收藏品弹窗的打开、关闭和UI更新。
  * (已修正：移除延迟查找逻辑)
+ * (已修改：支持显示信物 (heirloom) 等级)
+ * (已修改：添加 Tooltip 支持，显示物品描述)
+ * (已修改：支持显示物品图标)
  * ==================================================================
  */
 
 import { elements } from './domElements.js';
 import { gameState } from '../core/gameState.js';
 import { ITEM_DATA } from '../data/item-data.js';
+import { 
+    handleCollectibleTooltipShow, 
+    handleTooltipHide, 
+    handleTooltipMove 
+} from './tooltipManager.js'; 
 
 let isCollectiblesCloseBtnListenerAttached = false;
+let isCollectiblesListListenerAttached = false; 
 
 /**
  * 构建收藏品弹窗的HTML
+ * (已修改：添加 data-collectible-id 属性)
+ * (已修改：支持显示图标)
  */
 function buildCollectiblesModalHTML() {
     let html = '';
@@ -23,17 +34,39 @@ function buildCollectiblesModalHTML() {
         return html;
     }
 
-    // (样式将在下一步的 game.css 中添加)
-    html += '<div class="collectibles-list">';
+    html += '<div class="collectibles-list" id="collectiblesList">'; 
     
     gameState.collectibles.forEach(itemId => {
         const item = ITEM_DATA[itemId];
         if (item) {
             const rarityClass = `rarity-${item.rarity || 'common'}`;
+            let itemName = item.name;
+            let itemType = '';
+
+            if (item.type === 'heirloom' && item.heirloomId) {
+                const level = gameState.heirloomLevels[item.heirloomId] || 0;
+                if (level > 0) {
+                    itemName += ` (等级 ${level})`;
+                }
+                itemType = '信物';
+            }
+            else if (item.slot === 'mainhand') {
+                itemType = '传说武器';
+            }
+            else if (item.slot === 'collectible') {
+                itemType = '坐骑';
+            }
+
+            // (修改) 获取图标
+            const iconSpan = item.icon ? `<span style="margin-right: 8px; font-size: 1.4em;">${item.icon}</span>` : '';
+
             html += `
-                <div class="collectible-item ${rarityClass}">
-                    <span class="collectible-name">${item.name}</span>
-                    <span class="collectible-type">${item.slot === 'mainhand' ? '传说武器' : '坐骑'}</span>
+                <div class="collectible-item ${rarityClass}" data-collectible-id="${itemId}">
+                    <div style="display: flex; align-items: center;">
+                        ${iconSpan}
+                        <span class="collectible-name">${itemName}</span>
+                    </div>
+                    <span class="collectible-type">${itemType}</span>
                 </div>
             `;
         }
@@ -45,15 +78,12 @@ function buildCollectiblesModalHTML() {
 
 /**
  * 刷新收藏品弹窗的内容
- * (已修正：移除延迟查找)
  */
 function updateCollectiblesModal() {
-    // (已移除) 延迟查找 body
      if (!elements.collectiblesModalBody) {
-         console.error("Cannot update collectibles modal: collectiblesModalBody not found (initElements failed?).");
+         console.error("Cannot update collectibles modal: collectiblesModalBody not found.");
          return; 
      }
-
     try {
         elements.collectiblesModalBody.innerHTML = buildCollectiblesModalHTML();
     } catch (error) {
@@ -63,26 +93,25 @@ function updateCollectiblesModal() {
 
 /**
  * 打开收藏品弹窗
- * (已修正：移除延迟查找)
  */
 export function openCollectiblesModal() {
-    // 1. (已移除) 延迟查找关闭按钮 (现在由 initElements 负责)
-    
-    // 2. 仅绑定一次关闭事件
     if (elements.collectiblesModalCloseBtn && !isCollectiblesCloseBtnListenerAttached) {
         elements.collectiblesModalCloseBtn.addEventListener('click', () => {
             if (elements.collectiblesModal) {
                 elements.collectiblesModal.style.display = 'none';
             }
+            handleTooltipHide(); 
         });
         isCollectiblesCloseBtnListenerAttached = true;
-        console.log("Attached listener to collectiblesModalCloseBtn");
-    } else if (!elements.collectiblesModalCloseBtn) {
-        // (这个错误现在只会在 initElements 失败时出现)
-        console.error("Could not find collectiblesModalCloseBtn to attach listener.");
     }
 
-    // 3. 更新内容并显示
+    if (elements.collectiblesModalBody && !isCollectiblesListListenerAttached) {
+        elements.collectiblesModalBody.addEventListener('mouseover', handleCollectibleTooltipShow);
+        elements.collectiblesModalBody.addEventListener('mouseout', handleTooltipHide);
+        elements.collectiblesModalBody.addEventListener('mousemove', handleTooltipMove);
+        isCollectiblesListListenerAttached = true;
+    }
+
     updateCollectiblesModal();
     if (elements.collectiblesModal) {
         elements.collectiblesModal.style.display = 'flex';

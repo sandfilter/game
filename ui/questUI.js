@@ -2,7 +2,7 @@
  * ==================================================================
  * ui/questUI.js
  * (已修改：移除了重复的 updateQuestDisplay 函数定义)
- * (已修改：添加 title 属性以显示任务描述)
+ * (已修改：移除 title 属性，添加 data-quest-tooltip 和 data-quest-id 用于自定义提示框)
  * ==================================================================
  */
 
@@ -13,7 +13,7 @@ let isQuestListListenerAttached = false; //
 
 /**
  * 构建任务列表的HTML
- * (已修改：添加里程碑检查 和 title 属性)
+ * (已修改：添加里程碑检查 和 data- 属性)
  */
 function buildQuestListHTML(questConfig) { //
     let html = ''; //
@@ -31,9 +31,9 @@ function buildQuestListHTML(questConfig) { //
             return; // 如果已领取，则不显示
         }
         
-        // (修改) 添加 title 属性 (用于悬停显示描述)
+        // (修改) 移除 title 属性，添加 data- 属性
         html += `
-            <div class="quest-item" title="${quest.description || ''}">
+            <div class="quest-item" data-quest-tooltip="true" data-quest-id="${quest.id}">
                 <div>${quest.name}</div>
                 <div class="quest-progress">
                     <span>${progress} / ${quest.target}</span>

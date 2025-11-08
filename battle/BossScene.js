@@ -4,6 +4,12 @@
  * (已修改：将 gameLoop 从 setInterval 切换回 requestAnimationFrame)
  * (已修改：实现动态战斗速度和勇士属性)
  * (已修正：战斗速度公式)
+ * (已修改：更新BOSS HP计算公式，使用线性和难度等级)
+ * (已修改：移除控制台日志)
+ * (已修改：熟练度加速机制改为递减公式)
+ * (已修改：降低 5 人本 BOSS 血量 50%)
+ * (已修改：降低 5 人本 BOSS 攻击力 40%)
+ * (已修改：将点击伤害从画布移至按钮，并使伤害数字更醒目)
  * ==================================================================
  */
 
@@ -23,8 +29,10 @@ export class AnimatedBossSceneGame { //
         this.ctx = adventureGame.ctx; //
         this.currentBossData = currentBossData || { 名称: "未知BOSS" }; //
         this.animationFrameId = null; //
+        this.clickBtn = document.getElementById('bossClickBtn'); // (新增) 获取按钮
 
-        this.handleCanvasClick = this.handleCanvasClick.bind(this); //
+        // (修改) 绑定到按钮点击事件
+        this.handleBtnClick = this.handleBtnClick.bind(this); 
         this.floatingTexts = []; //
         
         // --- 修改：为 rAF 绑定 this ---
@@ -38,12 +46,16 @@ export class AnimatedBossSceneGame { //
      * 修改：使用 requestAnimationFrame
      */
     startAnimation() { //
-        console.log("BossScene: Starting rAF loop.");
+        // console.log("BossScene: Starting rAF loop."); // <<< (已注释)
         this.lastFrameTime = performance.now(); // 重置计时器
         this.animationFrameId = requestAnimationFrame(this.animationLoop); //
         this.adventureGame.setAnimationFrameId(this.animationFrameId); //
 
-        this.canvas.addEventListener('click', this.handleCanvasClick); //
+        // (修改) 显示按钮并绑定事件
+        if (this.clickBtn) {
+            this.clickBtn.style.display = 'block';
+            this.clickBtn.addEventListener('click', this.handleBtnClick);
+        }
     } //
     
     /**
@@ -52,25 +64,50 @@ export class AnimatedBossSceneGame { //
     stopAnimation() { //
         if (this.animationFrameId) { //
             cancelAnimationFrame(this.animationFrameId); //
-            console.log("BossScene: Stopped rAF loop.");
+            // console.log("BossScene: Stopped rAF loop."); // <<< (已注释)
         }
         this.animationFrameId = null; //
 
-        this.canvas.removeEventListener('click', this.handleCanvasClick); //
+        // (修改) 隐藏按钮并解绑事件
+        if (this.clickBtn) {
+            this.clickBtn.style.display = 'none';
+            this.clickBtn.removeEventListener('click', this.handleBtnClick);
+        }
         this.floatingTexts = []; //
     } //
     
-    initGame() { /* ... (保持不变) ... */ } //
-    // (Implementation omitted)
+    /**
+     * (已修改) 更新BOSS HP计算公式
+     */
     initGame() { 
         this.heroCount = (this.animationState.heroes && this.animationState.heroes.length > 0) ? this.animationState.heroes.length : this.animationState.heroCount; 
-        let baseHp = GAME_CONFIG.bossScene.bossBaseHp;
-        let hpPerHero = GAME_CONFIG.bossScene.bossHpPerHero;
-        let scalingHeros = (this.heroCount - 5);
-        if (this.heroCount === 25) {
-            hpPerHero = hpPerHero * 2;
+        
+        // --- (修改) HP 计算 ---
+        const size = this.heroCount;
+        // 从 dungeon-data.js 获取难度等级
+        const difficulty = this.currentBossData.难度等级 || 1;
+        let difficultyMultiplier = 1.0;
+        
+        // 定义难度系数 (1级=1.0x, 2级=1.25x, 3级=1.5x)
+        if (difficulty === 2) difficultyMultiplier = 1.25;
+        if (difficulty === 3) difficultyMultiplier = 1.5;
+        if (difficulty === 4) difficultyMultiplier = 1.75; // (新增) 奥杜尔难度
+        if (difficulty === 5) difficultyMultiplier = 2.0;  // (新增) 奥杜尔难度
+
+        const baseHp = GAME_CONFIG.bossScene.bossBaseHp; 
+        
+        // 按规模线性缩放
+        const scaledHp = (baseHp / 5) * size; 
+        
+        // --- (新增) 5人本特殊减伤 ---
+        let reductionFactor = 1.0;
+        if (size === 5) {
+            reductionFactor = 0.5; // 5人本 BOSS 血量减半
         }
-        this.bossMaxHp = baseHp + (scalingHeros * hpPerHero);
+        
+        this.bossMaxHp = Math.floor(scaledHp * difficultyMultiplier * reductionFactor); // 应用难度系数和减伤
+        // --- 修改结束 ---
+
         this.battleStarted = false; 
         this.battleStartTime = 0; 
         this.lastBossAttack = 0; 
@@ -83,34 +120,27 @@ export class AnimatedBossSceneGame { //
         this.setupSurroundPositions(); 
         this.lastFrameTime = performance.now();
     } 
-    handleCanvasClick(event) { /* ... (保持不变) ... */ } //
-    // (Implementation omitted)
-    handleCanvasClick(event) { 
+
+    // (修改) 新的按钮点击处理函数
+    handleBtnClick() { 
         if (!this.boss || this.boss.hp <= 0 || this.gameOver) { 
             return;
         }
-        const rect = this.canvas.getBoundingClientRect(); 
-        const clickX = event.clientX - rect.left; 
-        const clickY = event.clientY - rect.top; 
-        const bossDrawSize = 16 * this.boss.size; 
-        const halfSize = bossDrawSize / 2; 
-        const bossLeft = this.boss.x - halfSize; 
-        const bossRight = this.boss.x + halfSize; 
-        const bossTop = this.boss.y - halfSize; 
-        const bossBottom = this.boss.y + halfSize; 
-        if (clickX >= bossLeft && clickX <= bossRight && clickY >= bossTop && clickY <= bossBottom) { 
-            console.log(`Boss clicked! Dealing ${clickDamageValue} damage.`); 
-            this.boss.hp = Math.max(0, this.boss.hp - clickDamageValue); 
-            this.lastBossDamageTime = Date.now() / 1000; 
-            this.floatingTexts.push({ 
-                value: clickDamageValue, 
-                x: clickX, 
-                y: clickY,
-                alpha: 1.0, 
-                life: 1.5,
-                color: 'red'
-            });
-        }
+        // console.log(`Boss clicked via button! Dealing ${clickDamageValue} damage.`); 
+        this.boss.hp = Math.max(0, this.boss.hp - clickDamageValue); 
+        this.lastBossDamageTime = Date.now() / 1000; 
+        
+        // 在 BOSS 位置生成浮动文字 (使用更大的字体和醒目的颜色)
+        this.floatingTexts.push({ 
+            value: clickDamageValue, 
+            x: this.boss.x + (Math.random() - 0.5) * 30, 
+            y: this.boss.y - 60 + (Math.random() - 0.5) * 20,
+            alpha: 1.0, 
+            life: 0.8, // 缩短飘字时间使其更紧凑
+            color: '#ffcc00', // 金黄色
+            fontSize: '36px', // 更大的字体
+            isCrit: true // 标记为暴击样式 (可选，用于未来扩展)
+        });
     }
 
     /**
@@ -165,6 +195,21 @@ export class AnimatedBossSceneGame { //
     // (Implementation omitted)
     createBoss() { 
         const emoji = GAME_CONFIG.bossScene.bossEmojis[Math.floor(Math.random() * GAME_CONFIG.bossScene.bossEmojis.length)];
+        
+        // 1. 基础伤害
+        let baseDamage = Math.floor(Math.random() * GAME_CONFIG.bossScene.bossDamageExtra) + GAME_CONFIG.bossScene.bossDamageBase;
+
+        // 2. 团队规模奖励 (保留原有逻辑: heroCount > 10)
+        if (this.heroCount > 10) {
+             baseDamage += GAME_CONFIG.bossScene.bossDamageBonus;
+        }
+
+        // 3. (新增) 5人本攻击力减免
+        if (this.heroCount === 5) {
+            // 降低 40% 的伤害
+            baseDamage = Math.floor(baseDamage * 0.6); 
+        }
+
         this.boss = {
             ...this.currentBossData,
             emoji: emoji, 
@@ -173,7 +218,7 @@ export class AnimatedBossSceneGame { //
             hp: this.bossMaxHp,
             maxHp: this.bossMaxHp,
             size: GAME_CONFIG.bossScene.bossSize, 
-            damage: Math.floor(Math.random() * GAME_CONFIG.bossScene.bossDamageExtra) + GAME_CONFIG.bossScene.bossDamageBase + (this.heroCount > 10 ? GAME_CONFIG.bossScene.bossDamageBonus : 0), 
+            damage: Math.max(1, baseDamage), // 确保伤害至少为 1
             attackRange: GAME_CONFIG.bossScene.bossAttackRange, 
             active: false,
             shakeOffsetX: 0,
@@ -194,7 +239,7 @@ export class AnimatedBossSceneGame { //
     } 
     
     /**
-     * (已修正：使用 8.0 + ... 公式)
+     * (已修改：应用新的熟练度公式)
      */
     animationLoop(timestamp) { //
         if (!this.gameOver) { //
@@ -205,9 +250,13 @@ export class AnimatedBossSceneGame { //
                 deltaTime = 1; // Cap delta time
             }
 
-            // --- (修正) 应用动态战斗速度倍率 ---
+            // --- (修改) 应用动态战斗速度倍率（新公式） ---
             const proficiency = this.adventureGame.masterGameState?.proficiency ?? 0;
-            const dynamicSpeedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + (proficiency / 1000); // <<< (修正)
+            
+            // 新公式: ProficiencyBonus = (3 * proficiency) / (4000 + proficiency)
+            const proficiencyBonus = (3 * proficiency) / (4000 + proficiency);
+            const dynamicSpeedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + proficiencyBonus; // 基础速度 + 加成速度
+            
             deltaTime *= dynamicSpeedMultiplier;
             // --- 速度修改结束 ---
 
@@ -245,7 +294,7 @@ export class AnimatedBossSceneGame { //
     } 
 
     /**
-     * (已修正：使用 8.0 + ... 公式)
+     * (已修改：应用新的熟练度公式)
      */
     updateBattle(deltaTime) { 
         if (!this.battleStarted) return; 
@@ -262,9 +311,12 @@ export class AnimatedBossSceneGame { //
             } 
         }); 
 
-        // (修正) 动态计算速度
+        // (修改) 动态计算速度
         const proficiency = this.adventureGame.masterGameState?.proficiency ?? 0; 
-        const speedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + (proficiency / 1000); // <<< (修正)
+        
+        // 新公式: ProficiencyBonus = (3 * proficiency) / (4000 + proficiency)
+        const proficiencyBonus = (3 * proficiency) / (4000 + proficiency);
+        const speedMultiplier = BASE_BATTLE_SPEED_MULTIPLIER + proficiencyBonus; // <<< (修改)
 
         if (this.boss.active && this.boss.hp > 0 && currentTime - this.lastBossAttack > (this.bossAttackInterval / speedMultiplier)) { 
             this.lastBossAttack = currentTime; 
@@ -281,8 +333,7 @@ export class AnimatedBossSceneGame { //
             } 
         } 
     } 
-    updateFloatingTexts(deltaTime) { /* ... (保持不变) ... */ } //
-    // (Implementation omitted)
+    // (修改) 更新浮动文字，支持自定义字体大小
     updateFloatingTexts(deltaTime) { 
         this.floatingTexts = this.floatingTexts.filter(text => { 
             text.y -= 15 * deltaTime; 
@@ -335,13 +386,13 @@ export class AnimatedBossSceneGame { //
             if (hero.hp > 0) this.drawHealthBar(hero.x - 25, hero.y - 30, hero.hp, hero.maxHp, "blue"); 
         }); 
     } 
-    drawFloatingTexts() { /* ... (保持不变) ... */ } //
-    // (Implementation omitted)
+    // (修改) 支持自定义字体大小
     drawFloatingTexts() { 
         this.floatingTexts.forEach(text => { 
             this.ctx.save(); 
             this.ctx.globalAlpha = Math.max(0, text.alpha); 
-            this.ctx.font = 'bold 24px Arial'; 
+            // 使用自定义字体大小，默认为 24px
+            this.ctx.font = `bold ${text.fontSize || '24px'} Arial`; 
             this.ctx.fillStyle = text.color; 
             this.ctx.textAlign = 'center'; 
             this.ctx.textBaseline = 'middle'; 
@@ -372,7 +423,7 @@ export class AnimatedBossSceneGame { //
     // (Implementation omitted)
     getHeroColor(hero) { 
         const hpRatio = hero.hp / hero.maxHp; 
-        return hero.hp <= 0 ? "#777777" : hpRatio > 0.6 ? "#66B3FF" : hpRatio > 0.3 ? "#FFA500" : "#FF6347"; 
+        return hero.hp <= 0 ? GAME_CONFIG.hero.colors.dead : hpRatio > 0.6 ? GAME_CONFIG.hero.colors.healthy : hpRatio > 0.3 ? GAME_CONFIG.hero.colors.injured : hpRatio > 0.3 ? GAME_CONFIG.hero.colors.injured : GAME_CONFIG.hero.colors.critical;
     } 
     drawCharacter(emoji, x, y, size, color) { /* ... (保持不变) ... */ } //
     // (Implementation omitted)
