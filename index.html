@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>挂鸡污喵王内测版0.3</title>
+    <title>挂鸡污喵王内测版0.4</title>
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/slot-machine.css">
 </head>
 <body>
     <div class="container">
@@ -37,7 +38,21 @@
                         <div class="stats-text" id="battleTime"></div>
                         <div class="countdown-text" id="countdown"></div>
                     </div>
-                    <button id="bossClickBtn" class="wow-button" style="display: none;">🔥攻击BOSS!</button>
+                    
+                    <div id="commanderSkillBar" style="display: none;">
+                        <div class="skill-btn-wrapper">
+                            <button id="skillAttackBtn" class="wow-button skill-btn">⚔️ 猛击</button>
+                        </div>
+                        <div class="skill-btn-wrapper">
+                            <button id="skillHeroismBtn" class="wow-button skill-btn">🩸 嗜血</button>
+                            <div class="skill-cooldown" id="cdHeroism"></div>
+                        </div>
+                        <div class="skill-btn-wrapper" style="display: none;">
+                            <button id="skillArmyBtn" class="wow-button skill-btn">🧟 亡者大军</button>
+                            <div class="skill-cooldown" id="cdArmy"></div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="message-section">
                     <div class="message-header"><span>📜 消息日志</span></div>
@@ -67,6 +82,11 @@
                 <div class="wow-button" id="dungeon25Btn">25人团队副本</div>
                 <div class="wow-button" id="exchangeBtn">兑换中心</div>
                 <div class="wow-button" id="collectiblesBtn">收藏品</div>
+                
+                <div class="chest-wrapper" id="chestBtn" title="点击打开幸运宝箱">
+                    <div class="chest-icon">🎁</div>
+                    <div class="chest-badge" id="chestBadge">0</div>
+                </div>
             </div>
         </div>
 
@@ -116,8 +136,8 @@
                 <button class="modal-close" id="settingsModalCloseBtn">&times;</button>
             </div>
             <div class="modal-body settings-button-container">
-                <button id="importSaveBtn" class="wow-button">导入存档</button>
-                <button id="exportSaveBtn" class="wow-button">导出存档</button>
+                <button id="importSaveBtn" class="wow-button" style="display: none;">导入存档</button>
+                <button id="exportSaveBtn" class="wow-button" style="display: none;">导出存档</button>
                 <button id="gameHelpBtn" class="wow-button">游戏说明</button>
                 <button id="clearSaveBtn" class="wow-button">清除存档</button>
                 <button id="ascendBtn" class="wow-button" style="display: none;">飞升重置</button>
@@ -137,8 +157,8 @@
                 <h3>游戏目标：</h3>
                 <ul>
                     <li>通过挑战 5/10/25 人副本提升你的装备等级。</li>
-                    <li>在 25 人副本“奥杜尔”中收集“瓦兰奈尔的碎片”。</li>
-                    <li>完成任务，铸造传说武器：瓦兰奈尔·远古王者之锤！</li>
+                    <li>在 25 人副本“十字军的试炼”中收集“炉石传说的碎片”，铸造传说武器：炉石传说·真尼玛好玩！</li>
+                    <li>收集有趣的玩具、坐骑等收藏品，当前版本共17件。</li>
                 </ul>
                 <br>
                 <h3>提示：</h3>
@@ -146,8 +166,8 @@
                     <li>因每次更新改动较大，内测版存档可能在更新后无法继承，请见谅。</li>
                     <li>每当完成所有5人地下城，所有地下城的进度将重置。</li>
                     <li>熟练度可略微增加勇士们攻击速度和移动速度；装备等级可增加勇士们的攻击力和血量。</li>
-                    <li>增加25人永恒之眼低掉率收藏品[碧蓝幼龙的缰绳]，25人黑曜石圣殿低掉率收藏品[暮光幼龙的缰绳]。</li>
-                    <li>增加25人奥杜尔低掉率收藏品[米米尔隆的头部]。</li>
+                    <li>当拥有橙色武器时，可在设置中进行飞升，获得传奇信物，收藏品不会重置。</li>
+                    <li>兑换中心新增欢乐水果机。</li>
                 </ul>
             </div>
         </div>
@@ -203,9 +223,9 @@
                     </div>
                      <div class="stats-section">
                         <h3>传说碎片</h3>
-                        <p>🔸 埃提耶什: <span id="charAtiyehsuideDisplay">--</span></p>
-                         <p>🔸 瓦兰奈尔: <span id="charWalanaiersuideDisplay">--</span></p>
-                        <p>🔸 炉石传说: <span id="charLushichuanshuodesuideDisplay">--</span></p>
+                        <p>🔸 埃提耶什的碎片: <span id="charAtiyehsuideDisplay">--</span></p>
+                         <p>🔸 瓦兰奈尔的碎片: <span id="charWalanaiersuideDisplay">--</span></p>
+                        <p>🔸 炉石传说的碎片: <span id="charLushichuanshuodesuideDisplay">--</span></p>
                          <p>🔸 影之碎片: <span id="charYingzhisuideDisplay">--</span></p>
                          <p>🔸 霜之碎片: <span id="charShuangzhisuideDisplay">--</span></p>
                     </div>
@@ -233,6 +253,7 @@
     </div>
 
     <div id="reminderContainer" class="reminder-container"></div>
+    <div id="lootPopup"></div>
 
     <script type="module" src="main.js"></script>
 </body>

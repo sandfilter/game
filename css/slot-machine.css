@@ -1,0 +1,37 @@
+#exchangeModal .modal-content { width: 1200px !important; max-width: 98vw; height: 90vh; max-height: none !important; background: linear-gradient(145deg, #2a0505, #4a0202, #2a0505); border: 4px solid #a3751e; color: #ffd700; display: flex; flex-direction: column; }
+#exchangeModal .modal-body { flex: 1; padding: 0; overflow: hidden; display: flex; }
+.slot-machine-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; padding: 15px; box-sizing: border-box; }
+.slot-side-panel { width: 340px; background: rgba(0, 0, 0, 0.3); border: 1px solid #5d8aa8; border-radius: 8px; display: flex; flex-direction: column; padding: 12px; overflow-y: auto; }
+.slot-side-title { text-align: center; font-size: 20px; font-weight: bold; color: #ffeb3b; border-bottom: 2px solid #a3751e; margin-bottom: 10px; padding-bottom: 5px; text-shadow: 0 0 5px #f00; }
+.asset-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 4px; }
+.asset-item { display: flex; justify-content: space-between; font-size: 13px; border-bottom: 1px solid #333; padding: 2px 0; color: #fff; }
+.asset-name { color: #aaddff; } .asset-val { color: #fff; font-weight: bold; }
+.exchange-list { display: flex; flex-direction: column; gap: 6px; }
+.slot-exchange-row { background: linear-gradient(to bottom, #3a6187, #1c2f40); border: 1px solid #5d8aa8; padding: 5px; border-radius: 4px; display: flex; flex-direction: column; gap: 3px; }
+.ex-info { display: flex; justify-content: space-between; font-size: 12px; color: #aaddff; }
+.ex-btns { display: flex; gap: 5px; }
+.slot-exchange-btn { flex: 1; background: #222; border: 1px solid #555; color: #ffd700; cursor: pointer; padding: 4px; border-radius: 3px; font-size: 11px; transition: all 0.1s; }
+.slot-exchange-btn:hover { background: #444; border-color: #ffeb3b; } .slot-exchange-btn:active { transform: scale(0.95); }
+.collectible-exchange-section { margin-top: auto; padding-top: 10px; border-top: 1px solid #555; }
+.collectible-exchange-btn { width: 100%; background: linear-gradient(to bottom, #6a0dad, #4b0082); border: 1px solid #a335ee; color: #fff; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 6px; }
+.slot-game-area { flex: 1; display: flex; flex-direction: column; gap: 10px; background: #2a0505; border: 3px solid #333; border-radius: 12px; padding: 10px; box-shadow: inset 0 0 30px #000; }
+.title-bar { display: flex; justify-content: center; margin-bottom: 5px; } .game-title { font-size: 32px; font-weight: bold; color: #fca311; text-shadow: 2px 2px 0 #000; }
+.slot-track-container { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; flex: 1; background: #111; padding: 8px; border-radius: 10px; border: 3px solid #fca311; position: relative; }
+.slot-track-item { display: flex; justify-content: center; align-items: center; font-size: 28px; background: #333; border: 2px solid #555; border-radius: 6px; transition: 0.05s; }
+.slot-track-item.active { background: #ffeb3b; border-color: #fff; box-shadow: 0 0 20px #ffeb3b; transform: scale(1.1); z-index: 10; }
+.slot-center-panel { grid-column: 2 / span 6; grid-row: 2 / span 4; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.6); border-radius: 10px; z-index: 5; color: #fff; }
+.slot-credits-display { font-family: 'Courier New', monospace; font-size: 56px; color: #ffeb3b; background: #000; padding: 5px 30px; border: 3px solid #a3751e; border-radius: 10px; text-shadow: 0 0 15px #ffeb3b; margin-bottom: 15px; }
+.slot-message-display { font-size: 22px; font-weight: bold; color: #aaddff; text-align: center; text-shadow: 2px 2px 0 #000; height: 30px; }
+.slot-controls { background: #1a1a1a; border: 2px solid #555; border-radius: 12px; padding: 10px; }
+.slot-bet-area { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-bottom: 10px; }
+.slot-bet-btn { display: flex; flex-direction: column; align-items: center; padding: 4px; border-radius: 6px; border: 2px solid #555; cursor: pointer; background: #222; }
+.slot-bet-btn:active { transform: scale(0.95); }
+.slot-bet-val { font-family: monospace; font-size: 18px; color: #0f0; background: #000; width: 100%; text-align: center; margin-bottom: 2px; }
+.slot-bet-icon { font-size: 24px; } .slot-bet-rate { font-size: 11px; color: #ffd700; }
+.slot-bet-btn[data-symbol="🍎"] { border-color: #faa; background: #300; } .slot-bet-btn[data-symbol="🍊"] { border-color: #fca; background: #320; } .slot-bet-btn[data-symbol="🍋"] { border-color: #ffa; background: #330; } .slot-bet-btn[data-symbol="🔔"] { border-color: #afa; background: #020; }
+.slot-bet-btn[data-symbol="🍉"] { border-color: #afa; background: #020; } .slot-bet-btn[data-symbol="⭐️"] { border-color: #aaf; background: #002; } .slot-bet-btn[data-symbol="77"] { border-color: #faa; background: #300; } .slot-bet-btn[data-symbol="BAR"] { border-color: #fff; background: #222; }
+.slot-action-row { display: flex; gap: 10px; }
+.slot-action-btn { padding: 10px; font-size: 16px; font-weight: bold; color: #fff; border-radius: 8px; border: 2px solid #fff; cursor: pointer; flex: 1; text-shadow: 1px 1px 0 #000; transition: 0.1s; }
+.slot-action-btn:active { transform: scale(0.98); }
+#btnSlotStart { background: #008800; border-color: #0f0; flex: 2; font-size: 20px; } #btnSlotStart:hover { background: #0a0; box-shadow: 0 0 15px #0f0; }
+#btnSlotClear { background: #555; } #btnSlotAllIn { background: #ba0; color: #000; text-shadow: none; } #btnSlotDouble { background: #00c; } #btnSlotHalf { background: #c0c; }

@@ -1,180 +1,75 @@
 /* --- 状态栏 --- */
-.status-bar {
-    display: flex;
-    align-items: center; /* Vertically align items */
-    padding: 10px 15px; /* <-- 修改: 减少状态栏内边距 */
-    background: linear-gradient(to right, #1c2f40, #2a4865);
-    border-bottom: 2px solid #5d8aa8;
-    flex-wrap: wrap;
-}
-
-.status-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* <-- 修改: 减少状态项间隙 */
-}
-
-.status-item { display: flex; align-items: center; margin: 3px; font-size: 14px; } /* <-- 修改: 减少状态项外边距 */
+.status-bar { display: flex; align-items: center; padding: 10px 15px; background: linear-gradient(to right, #1c2f40, #2a4865); border-bottom: 2px solid #5d8aa8; flex-wrap: wrap; }
+.status-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.status-item { display: flex; align-items: center; margin: 3px; font-size: 14px; } 
 .status-icon { margin-right: 5px; font-size: 16px; }
 
-/* --- 底部按钮区域 --- */
-.button-section { padding: 12px; background: linear-gradient(to right, #1c2f40, #2a4865); border-top: 2px solid #5d8aa8; } /* <-- 修改: 减少内边距 */
-.button-header { text-align: center; margin-bottom: 8px; font-weight: bold; } /* <-- 修改: 减少下边距 */
-.button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 8px; } /* <-- 修改: 减少间隙和下边距 */
+/* --- 橙杖/橙锤/炉石技能图标 --- */
+.atiesh-skill-icon, .valanyr-skill-icon, .hearthstone-skill-icon {
+    margin-left: 8px; cursor: pointer; font-size: 18px; transition: transform 0.3s ease, filter 0.3s ease; display: inline-block; vertical-align: middle;
+}
+.atiesh-skill-icon:hover { transform: scale(1.3) rotate(180deg); filter: drop-shadow(0 0 5px #00ccff); }
+.valanyr-skill-icon:hover { transform: scale(1.3); filter: drop-shadow(0 0 5px #ffd700); }
+/* (新增) */
+.hearthstone-skill-icon:hover { transform: scale(1.3) rotate(-10deg); filter: drop-shadow(0 0 5px #00ff00); }
 
-/* --- 通用按钮样式 --- */
-.wow-button { padding: 8px 16px; background: linear-gradient(to bottom, #3a6187, #1c2f40); border: 1px solid #5d8aa8; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-weight: bold; transition: all 0.2s; min-width: 110px; text-align: center; font-size: 14px; } /* <-- 修改: 减少内边距和最小宽度 */
+/* --- 底部按钮区域 --- */
+.button-section { padding: 12px; background: linear-gradient(to right, #1c2f40, #2a4865); border-top: 2px solid #5d8aa8; } 
+.button-header { text-align: center; margin-bottom: 8px; font-weight: bold; } 
+.button-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 8px; } 
+
+/* --- 通用按钮 --- */
+.wow-button { padding: 8px 16px; background: linear-gradient(to bottom, #3a6187, #1c2f40); border: 1px solid #5d8aa8; border-radius: 4px; color: #e0e0e0; cursor: pointer; font-weight: bold; transition: all 0.2s; min-width: 110px; text-align: center; font-size: 14px; } 
 .wow-button:hover { background: linear-gradient(to bottom, #4a79ab, #2a4865); box-shadow: 0 0 8px rgba(93, 138, 168, 0.6); }
-.wow-button:active { transform: translateY(1px); } /* <-- 修改: 减少按下距离 */
+.wow-button:active { transform: translateY(1px); } 
 .wow-button.disabled { background: #2a3b4a; color: #777; cursor: not-allowed; border-color: #444; }
 .wow-button.disabled:hover { transform: none; box-shadow: none; background: #2a3b4a; }
 
-/* --- 存档按钮组 (状态栏) --- */
-.save-button-group { margin-left: auto; display: flex; gap: 8px;} /* <-- 修改: 减少间隙 */
-
-/* (修改：现在 #settingsBtn 使用这个样式) */
-#settingsBtn {
-     padding: 6px 12px; /* <-- 修改: 减少内边距 */
-     min-width: auto;
-     font-size: 13px; /* <-- 修改: 缩小字体 */
+/* --- 幸运宝箱 --- */
+.chest-wrapper {
+    position: relative; width: 45px; height: 38px; display: flex; justify-content: center; align-items: center;
+    background: linear-gradient(to bottom, #5a3a1a, #2a1a0a); border: 2px solid #a3751e; border-radius: 6px; cursor: pointer; transition: all 0.2s; box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+.chest-wrapper:hover { background: linear-gradient(to bottom, #7a4a2a, #3a2a1a); transform: scale(1.05); box-shadow: 0 0 10px #ffd700; }
+.chest-wrapper.has-chests { animation: chestPulse 2s infinite; border-color: #ffd700; }
+@keyframes chestPulse { 0% { box-shadow: 0 0 5px #ffd700; } 50% { box-shadow: 0 0 15px #ffd700; } 100% { box-shadow: 0 0 5px #ffd700; } }
+.chest-icon { font-size: 24px; }
+.chest-badge {
+    position: absolute; top: -8px; right: -8px; background-color: #ff4400; color: white; border-radius: 50%;
+    width: 20px; height: 20px; font-size: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; border: 1px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* (样式规则现在应用于弹窗内的按钮) */
-#importSaveBtn, #exportSaveBtn, #clearSaveBtn, #gameHelpBtn, #ascendBtn {
-     width: 100%; /* 让按钮撑满容器 */
-     min-width: auto;
-}
+/* --- 存档按钮 --- */
+.save-button-group { margin-left: auto; display: flex; gap: 8px;} 
+#settingsBtn { padding: 6px 12px; min-width: auto; font-size: 13px; }
+#importSaveBtn, #exportSaveBtn, #clearSaveBtn, #gameHelpBtn, #ascendBtn { width: 100%; min-width: auto; }
 #importSaveBtn { background: linear-gradient(to bottom, #2ca058, #1d6b3b); border-color: #3ac876; }
 #importSaveBtn:hover { background: linear-gradient(to bottom, #32b865, #228045); box-shadow: 0 0 8px rgba(58, 200, 118, 0.6); }
 #exportSaveBtn { background: linear-gradient(to bottom, #2c8ca0, #1d5b6b); border-color: #3ac8b0; }
 #exportSaveBtn:hover { background: linear-gradient(to bottom, #32a2b8, #226b80); box-shadow: 0 0 8px rgba(58, 200, 176, 0.6); }
 #clearSaveBtn { background: linear-gradient(to bottom, #a02c2c, #6b1d1d); border-color: #c83a3a; }
 #clearSaveBtn:hover { background: linear-gradient(to bottom, #b83232, #802222); box-shadow: 0 0 8px rgba(200, 58, 58, 0.6); }
+#ascendBtn { background: linear-gradient(to bottom, #d1790c, #a05a0a); border-color: #ff8000; }
+#ascendBtn:hover { background: linear-gradient(to bottom, #e6891a, #b86914); box-shadow: 0 0 8px rgba(255, 128, 0, 0.6); }
 
-#ascendBtn { 
-    background: linear-gradient(to bottom, #d1790c, #a05a0a); 
-    border-color: #ff8000; 
-}
-#ascendBtn:hover { 
-    background: linear-gradient(to bottom, #e6891a, #b86914); 
-    box-shadow: 0 0 8px rgba(255, 128, 0, 0.6); 
-}
+/* --- 弹窗 --- */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 200; }
+.modal-content { width: 600px; max-height: 80vh; background: linear-gradient(to bottom, #0a1a25, #1a3b5c); border: 2px solid #5d8aa8; border-radius: 8px; box-shadow: 0 0 25px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column; }
+.modal-header { padding: 12px; border-bottom: 1px solid #5d8aa8; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h2 { color: #ffcc00; font-size: 18px; } 
+.modal-close { font-size: 20px; color: #e0e0e0; cursor: pointer; border: none; background: none; font-weight: bold; }
+.modal-body { padding: 15px; overflow-y: auto; } 
+.settings-button-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.settings-button-container .wow-button { width: 100%; }
 
-/* --- 弹窗通用样式 --- */
-.modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: none; justify-content: center; align-items: center; z-index: 200;
-}
-.modal-content {
-    width: 600px; max-height: 80vh;
-    background: linear-gradient(to bottom, #0a1a25, #1a3b5c);
-    border: 2px solid #5d8aa8; border-radius: 8px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
-    display: flex; flex-direction: column;
-}
-.modal-header {
-    padding: 12px; border-bottom: 1px solid #5d8aa8; /* <-- 修改: 减少内边距 */
-    display: flex; justify-content: space-between; align-items: center;
-}
-.modal-header h2 { color: #ffcc00; font-size: 18px; } /* <-- 修改: 缩小字体 */
-.modal-close {
-    font-size: 20px; color: #e0e0e0; cursor: pointer; /* <-- 修改: 缩小字体 */
-    border: none; background: none; font-weight: bold;
-}
-.modal-body { padding: 15px; overflow-y: auto; } /* <-- 修改: 减少内边距 */
-
-/* 新增：设置弹窗内的按钮布局 */
-.settings-button-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 两列布局 */
-    gap: 10px;
-}
-.settings-button-container .wow-button {
-    width: 100%;
-}
-
-
-/* --- (新增) 待办提醒 (Toast) 样式 --- */
-.reminder-container {
-    position: fixed;
-    bottom: 50px; /* <<< (修改) 距离底部 25px */
-    right: 50px;  /* <<< (修改) 距离右侧 25px */
-    z-index: 1100; /* 高于 Tooltip (1000) 和 弹窗 (200) */
-    width: 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-@keyframes reminderFadeIn {
-    from {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.reminder-item {
-    background: linear-gradient(to right, #1c2f40, #2a4865);
-    border: 1px solid #5d8aa8;
-    border-radius: 6px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    animation: reminderFadeIn 0.5s ease-out forwards;
-    /* (修改) 移除了 fade-out 的 transition */
-    transition: transform 0.5s ease;
-}
-
-/* (修改) 移除了 .reminder-item.fade-out */
-
-.reminder-icon {
-    font-size: 20px;
-    margin-right: 10px;
-    flex-shrink: 0;
-}
-
-.reminder-message {
-    flex-grow: 1;
-    font-size: 14px;
-    color: #fff;
-    font-weight: bold;
-}
-
-/* (复用 game.css 中的稀有度颜色) */
-.reminder-item.epic .reminder-message {
-    color: #a335ee;
-}
-.reminder-item.legendary .reminder-message {
-    color: #ff8000;
-}
-
-.reminder-close {
-    font-size: 22px;
-    color: #88dd88; /* 绿色对号 */
-    cursor: pointer;
-    margin-left: 10px;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-.reminder-close:hover {
-    background-color: rgba(136, 221, 136, 0.2);
-}
-
-/* (新增) Tooltip 描述样式 */
-.tooltip-description {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #ffd700; /* 金色描述 */
-    font-style: italic;
-    line-height: 1.4;
-    border-top: 1px solid #444;
-    padding-top: 5px;
-}
+/* --- 提醒/Tooltip --- */
+.reminder-container { position: fixed; bottom: 50px; right: 50px; z-index: 1100; width: 320px; display: flex; flex-direction: column; gap: 8px; }
+@keyframes reminderFadeIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+.reminder-item { background: linear-gradient(to right, #1c2f40, #2a4865); border: 1px solid #5d8aa8; border-radius: 6px; padding: 12px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5); animation: reminderFadeIn 0.5s ease-out forwards; transition: transform 0.5s ease; }
+.reminder-icon { font-size: 20px; margin-right: 10px; flex-shrink: 0; }
+.reminder-message { flex-grow: 1; font-size: 14px; color: #fff; font-weight: bold; }
+.reminder-item.epic .reminder-message { color: #a335ee; }
+.reminder-item.legendary .reminder-message { color: #ff8000; }
+.reminder-close { font-size: 22px; color: #88dd88; cursor: pointer; margin-left: 10px; padding: 2px 5px; border-radius: 4px; font-weight: bold; transition: background-color 0.2s; }
+.reminder-close:hover { background-color: rgba(136, 221, 136, 0.2); }
+.tooltip-description { margin-top: 8px; font-size: 12px; color: #ffd700; font-style: italic; line-height: 1.4; border-top: 1px solid #444; padding-top: 5px; }

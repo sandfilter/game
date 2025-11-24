@@ -1,11 +1,7 @@
 /**
  * ==================================================================
- * ui/modalCollectibles.js (新文件)
- * 职责: 管理收藏品弹窗的打开、关闭和UI更新。
- * (已修正：移除延迟查找逻辑)
- * (已修改：支持显示信物 (heirloom) 等级)
- * (已修改：添加 Tooltip 支持，显示物品描述)
- * (已修改：支持显示物品图标)
+ * ui/modalCollectibles.js
+ * (已修改：区分显示 '坐骑' 和 '玩具')
  * ==================================================================
  */
 
@@ -23,8 +19,6 @@ let isCollectiblesListListenerAttached = false;
 
 /**
  * 构建收藏品弹窗的HTML
- * (已修改：添加 data-collectible-id 属性)
- * (已修改：支持显示图标)
  */
 function buildCollectiblesModalHTML() {
     let html = '';
@@ -54,10 +48,15 @@ function buildCollectiblesModalHTML() {
                 itemType = '传说武器';
             }
             else if (item.slot === 'collectible') {
-                itemType = '坐骑';
+                // (修改) 区分坐骑和玩具
+                if (itemId.startsWith('mount_')) {
+                    itemType = '坐骑';
+                } else {
+                    itemType = '玩具';
+                }
             }
 
-            // (修改) 获取图标
+            // 获取图标
             const iconSpan = item.icon ? `<span style="margin-right: 8px; font-size: 1.4em;">${item.icon}</span>` : '';
 
             html += `

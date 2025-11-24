@@ -9,7 +9,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 357px; /* */
+    min-height: 357px; 
+    transition: box-shadow 0.3s; 
+}
+
+/* 嗜血激活时的特效类 */
+.animation-area.heroism-active {
+    box-shadow: inset 0 0 50px rgba(255, 0, 0, 0.5);
+    border-color: #ff4400;
+    animation: heroismPulse 1s infinite alternate;
+}
+@keyframes heroismPulse {
+    from { box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.3); }
+    to { box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.7); }
 }
 
 .animation-area canvas {
@@ -21,34 +33,65 @@
     object-fit: contain;
 }
 
-/* (新增) BOSS战攻击按钮 */
-#bossClickBtn {
+/* --- (新增) 指挥官技能栏 --- */
+#commanderSkillBar {
     position: absolute;
     bottom: 10px;
-    right: 10px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     z-index: 20;
-    padding: 12px 20px;
-    font-size: 16px;
-    background: linear-gradient(to bottom, #d12c0c, #a0200a);
-    border-color: #ff4400;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    animation: pulseBtn 1.5s infinite alternate;
+    padding: 0 20px;
 }
-#bossClickBtn:hover {
-    background: linear-gradient(to bottom, #e6391a, #b82914);
-    transform: scale(1.05);
+
+.skill-btn-wrapper {
+    position: relative;
+    width: 120px;
+    height: 40px;
 }
-#bossClickBtn:active {
-    transform: scale(0.95);
+
+.skill-btn {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 覆盖 wow-button 的默认最小宽度 */
+    min-width: auto !important; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
-@keyframes pulseBtn {
-    from { box-shadow: 0 0 5px rgba(255, 68, 0, 0.3); }
-    to { box-shadow: 0 0 15px rgba(255, 68, 0, 0.8); }
+
+/* 不同技能的颜色 */
+#skillAttackBtn { background: linear-gradient(to bottom, #d12c0c, #a0200a); border-color: #ff4400; }
+#skillAttackBtn:hover { background: linear-gradient(to bottom, #e6391a, #b82914); }
+#skillAttackBtn:active { transform: scale(0.95); }
+
+#skillHeroismBtn { background: linear-gradient(to bottom, #c41e3a, #8a1529); border-color: #ff0033; }
+#skillHeroismBtn:hover:not(:disabled) { background: linear-gradient(to bottom, #e62e4d, #a81c34); box-shadow: 0 0 15px rgba(255, 0, 51, 0.6); }
+
+#skillArmyBtn { background: linear-gradient(to bottom, #4a3f55, #2d2633); border-color: #8e7cc3; }
+#skillArmyBtn:hover:not(:disabled) { background: linear-gradient(to bottom, #5e506b, #3e3547); box-shadow: 0 0 15px rgba(142, 124, 195, 0.6); }
+
+/* 冷却遮罩 */
+.skill-cooldown {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0%; /* 默认无冷却 */
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    pointer-events: none; /* 允许点击穿透（虽然禁用时按钮本身不可点） */
+    transition: height 0.1s linear;
 }
 
 .instructions {
     position: absolute;
-    bottom: 8px; /* */
+    bottom: 55px; /* 上移避开技能栏 */
     left: 50%;
     transform: translateX(-50%);
     font-size: 13px; /* */
@@ -107,11 +150,39 @@
 .progress-button-container { padding: 8px; text-align: center; } /* */
 
 /* --- 任务区域样式 (侧边栏) --- */
-.quest-area { flex: 1; background: #0c151f; border: 2px solid #5d8aa8; border-radius: 6px; display: flex; flex-direction: column; }
+.quest-area { 
+    /* (修改) 移除 flex: 1，改为自适应高度，防止撑开 */
+    /* flex: 1; */ 
+    background: #0c151f; 
+    border: 2px solid #5d8aa8; 
+    border-radius: 6px; 
+    display: flex; 
+    flex-direction: column; 
+    /* (修改) 确保它可以被 flex 容器正确 layout */
+    flex-grow: 0;
+    flex-shrink: 0;
+}
 .quest-title { text-align: center; padding: 8px; background: rgba(28, 47, 64, 0.7); border-bottom: 1px solid #5d8aa8; font-weight: bold; } /* */
-.quest-list { flex: 1; padding: 8px; overflow-y: auto; } /* */
+.quest-list { 
+    /* (修改) 限制高度为 200px (约 4-5 个任务) 并允许滚动 */
+    height: 360px;
+    padding: 8px; 
+    overflow-y: auto; 
+} /* */
 .quest-item { padding: 6px; border-bottom: 1px solid #2c4459; font-size: 13px; } /* */
 .quest-item:last-child { border-bottom: none; }
+.quest-section-header {
+    padding: 5px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #aaddff;
+    background: rgba(0,0,0,0.2);
+    border-bottom: 1px solid #2c4459;
+    margin-top: 5px;
+}
+.quest-item.daily-quest {
+    background: rgba(255, 215, 0, 0.05); /* 淡淡的金色背景 */
+}
 .quest-progress { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; } /* */
 .quest-claim-btn { padding: 3px 6px; background: #3a6187; border: 1px solid #5d8aa8; color: #e0e0e0; border-radius: 3px; cursor: pointer; font-size: 12px; } /* */
 .quest-claim-btn:disabled { background: #2a3b4a; color: #777; cursor: not-allowed; }
@@ -440,3 +511,85 @@
     border-top: 1px solid #444;
     padding-top: 5px;
 }
+
+/* --- (新增) 史诗掉落弹窗动画样式 --- */
+#lootPopup {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* 不阻挡鼠标，除非需要交互 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000; /* 最高层级 */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+/* 显示时的状态 */
+#lootPopup.active {
+    opacity: 1;
+}
+
+/* 弹窗内容容器 */
+.loot-popup-content {
+    position: relative;
+    text-align: center;
+    /* 初始状态：缩小且透明 */
+    transform: scale(0.2);
+    opacity: 0;
+}
+/* 激活时的动画：弹入并缓慢浮动 */
+#lootPopup.active .loot-popup-content {
+    animation: lootPopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, 
+               lootFloat 3s ease-in-out infinite alternate 0.6s;
+}
+
+@keyframes lootPopIn {
+    0% { transform: scale(0.2); opacity: 0; }
+    100% { transform: scale(1.2); opacity: 1; }
+}
+@keyframes lootFloat {
+    from { transform: translateY(0) scale(1.2); }
+    to { transform: translateY(-20px) scale(1.2); }
+}
+
+/* 背景光效 */
+.loot-flash-bg {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 600px; height: 600px;
+    margin-left: -300px; margin-top: -300px;
+    background: radial-gradient(circle, rgba(255,215,0,0.6) 0%, rgba(255,215,0,0) 70%);
+    z-index: -1;
+    opacity: 0;
+    transform: scale(0);
+}
+/* 史诗/传说光效颜色区分 */
+.loot-flash-bg.epic { background: radial-gradient(circle, rgba(163,53,238,0.6) 0%, rgba(163,53,238,0) 70%); }
+.loot-flash-bg.legendary { background: radial-gradient(circle, rgba(255,128,0,0.6) 0%, rgba(255,128,0,0) 70%); }
+
+#lootPopup.active .loot-flash-bg {
+    animation: flashExpand 0.8s ease-out forwards;
+}
+@keyframes flashExpand {
+    0% { transform: scale(0); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* 图标和文字样式 */
+.loot-icon-large {
+    font-size: 120px;
+    text-shadow: 0 0 20px rgba(0,0,0,0.5);
+    display: block;
+    margin-bottom: 10px;
+}
+.loot-name-large {
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 0 0 10px black, 0 0 20px black;
+    padding: 5px 20px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white; /* 默认 */
+}
+.loot-name-large.epic { color: #a335ee; }
+.loot-name-large.legendary { color: #ff8000; }
