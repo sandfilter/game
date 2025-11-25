@@ -19,8 +19,60 @@
 .slot-track-container { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); gap: 6px; flex: 1; background: #111; padding: 8px; border-radius: 10px; border: 3px solid #fca311; position: relative; }
 .slot-track-item { display: flex; justify-content: center; align-items: center; font-size: 28px; background: #333; border: 2px solid #555; border-radius: 6px; transition: 0.05s; }
 .slot-track-item.active { background: #ffeb3b; border-color: #fff; box-shadow: 0 0 20px #ffeb3b; transform: scale(1.1); z-index: 10; }
-.slot-center-panel { grid-column: 2 / span 6; grid-row: 2 / span 4; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.6); border-radius: 10px; z-index: 5; color: #fff; }
-.slot-credits-display { font-family: 'Courier New', monospace; font-size: 56px; color: #ffeb3b; background: #000; padding: 5px 30px; border: 3px solid #a3751e; border-radius: 10px; text-shadow: 0 0 15px #ffeb3b; margin-bottom: 15px; }
+.slot-center-panel {
+    grid-column: 2 / span 6;
+    grid-row: 2 / span 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    /* --- 修改开始 --- */
+    /* 1. 设置背景图片，并叠加一层半透明黑色遮罩，防止背景太花导致文字看不清 */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../images/泰兰德.jpg');
+    
+    /* 2. 背景图片不重复 */
+    background-repeat: no-repeat;
+    
+    /* 3. 图片居中显示 */
+    background-position: center center;
+    
+    /* 4. 调整尺寸模式 (二选一，根据您的喜好) */
+    
+    /* 模式A (推荐): 'cover' - 保持图片比例填满区域，多余部分会被裁切，图片不会变形 */
+    background-size: cover; 
+    
+    /* 模式B (可选): '100% 100%' - 强制拉伸图片填满区域，图片完整显示但会变形(变扁或变瘦) */
+    /* background-size: 100% 100%; */
+    /* --- 修改结束 --- */
+
+    border-radius: 10px;
+    z-index: 5;
+    color: #fff;
+}
+.slot-credits-display {
+    font-family: 'Courier New', monospace;
+    font-size: 56px;
+    padding: 5px 20px;
+    color: #ffeb3b;
+
+    /* --- 修改开始 --- */
+    /* 1. 背景改为全透明 */
+    background: transparent; 
+    
+    /* 2. 移除背景模糊效果 */
+    backdrop-filter: none;
+
+    /* 3. (可选) 如果连金色的边框也不想要，把下面这行改为 border: none; */
+    border: none;
+
+    /* 4. 增强文字阴影：加一层黑色描边(2px 2px 0 #000)，防止在亮色背景上看不清 */
+    text-shadow: 2px 2px 0 #000, 0 0 15px #ffeb3b;
+    /* --- 修改结束 --- */
+
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
 .slot-message-display { font-size: 22px; font-weight: bold; color: #aaddff; text-align: center; text-shadow: 2px 2px 0 #000; height: 30px; }
 .slot-controls { background: #1a1a1a; border: 2px solid #555; border-radius: 12px; padding: 10px; }
 .slot-bet-area { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-bottom: 10px; }
