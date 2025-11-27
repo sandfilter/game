@@ -1,5 +1,5 @@
 import { elements } from './domElements.js'; import { gameState } from '../core/gameState.js'; import { saveGame } from '../core/saveManager.js'; import { addMessage } from './messageLog.js'; import { ITEM_DATA } from '../data/item-data.js'; 
-import { handleAtieshPortal, handleValanyrChest, handleHearthstoneSkill } from '../core/gameActions.js'; // (新增)
+import { handleAtieshPortal, handleValanyrChest, handleHearthstoneSkill } from '../core/gameActions.js'; 
 import { callbacks } from '../core/callbackRegistry.js'; 
 
 export function updateStatsDisplay() {
@@ -31,22 +31,42 @@ function updateSpecialItemsDisplay() {
                 // 埃提耶什
                 if (item.name === "埃提耶什·守护者的传说之杖") {
                     const skillBtn = createSkillIcon('atiesh-skill-icon', '🌀');
+                    
+                    // 计算属性
+                    const level = Math.min(10, gameState.heirloomLevels?.atiyeh_staff || 0);
+                    const cd = Math.max(0, 33 - level * 3);
+
                     skillBtn.addEventListener('click', (e) => { e.stopPropagation(); const r = handleAtieshPortal(); addMessage(r.message, r.success?'legendary':'error'); });
-                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('卡拉赞传送门', '立即重置所有副本进度。', 60, gameState.lastAtieshResetTime));
+                    // 修改：动态显示信物等级
+                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('卡拉赞传送门', `立即重置所有副本进度。<br>信物等级: ${level}`, cd, gameState.lastAtieshResetTime));
                     attachTooltipMove(skillBtn); itemDiv.appendChild(skillBtn);
                 }
                 // 瓦兰奈尔
                 else if (item.name === "瓦兰奈尔·远古王者之锤") {
                     const skillBtn = createSkillIcon('valanyr-skill-icon', '🎁');
+                    
+                    // 计算属性
+                    const level = Math.min(10, gameState.heirloomLevels?.valanyr_hammer || 0);
+                    const cd = Math.max(0, 33 - level * 3);
+                    const amount = 5 + level * 5;
+
                     skillBtn.addEventListener('click', (e) => { e.stopPropagation(); const r = handleValanyrChest(); addMessage(r.message, r.success?'legendary':'error'); if(r.success && callbacks.updateChestUI) callbacks.updateChestUI(); });
-                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('远古王者的赐福', '立即获得 1 个幸运宝箱。', 15, gameState.lastValanyrChestTime));
+                    // 修改：动态显示获得数量和信物等级
+                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('远古王者的赐福', `立即获得 ${amount} 个幸运宝箱。<br>信物等级: ${level}`, cd, gameState.lastValanyrChestTime));
                     attachTooltipMove(skillBtn); itemDiv.appendChild(skillBtn);
                 }
-                // (新增) 炉石传说
+                // 炉石传说
                 else if (item.name === "炉石传说·真尼玛好玩") {
                     const skillBtn = createSkillIcon('hearthstone-skill-icon', '🎴');
+
+                    // 计算属性
+                    const level = Math.min(10, gameState.heirloomLevels?.hearthstone_card || 0);
+                    const cd = Math.max(0, 33 - level * 3);
+                    const amount = 10 + level * 10;
+
                     skillBtn.addEventListener('click', (e) => { e.stopPropagation(); const r = handleHearthstoneSkill(); addMessage(r.message, r.success?'legendary':'error'); if(r.success && callbacks.updateChestUI) callbacks.updateChestUI(); });
-                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('回合制游戏', '立即获得 1 个水果机积分。', 15, gameState.lastHearthstoneSkillTime));
+                    // 修改：动态显示获得数量和信物等级
+                    skillBtn.addEventListener('mouseenter', () => showSkillTooltip('回合制游戏', `立即获得 ${amount} 个水果机积分。<br>信物等级: ${level}`, cd, gameState.lastHearthstoneSkillTime));
                     attachTooltipMove(skillBtn); itemDiv.appendChild(skillBtn);
                 }
 
